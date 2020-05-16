@@ -12,9 +12,7 @@ A Rust library crate providing functions to:
 cargo run --example demo
 ```
 
-<video>
-<source src="demo.webm">
-</video>
+![Demo gif](demo.gif)
 
 ## More to read
 
