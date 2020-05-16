@@ -1,22 +1,18 @@
 # `hexeng`: a crate for handling hexagonal tilings / grids / tesselation
 
+A Rust library crate providing functions to:
+
 * Convert between Axial hexagon coordinates and cartesian space.
 * Apply an arbitrary "view" transform as necessary.
 * That's it for now!
-
-## Checkout and test
-
-```
-git clone https://github.com/jthorniley/hexeng.git
-cargo build
-cargo test
-```
 
 ## Demo
 
 ```
 cargo run --example demo
 ```
+
+![Demo gif](demo.gif)
 
 ## More to read
 
