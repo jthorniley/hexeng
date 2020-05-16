@@ -3,18 +3,23 @@ name = "hexeng"
 version = "0.1.0"
 authors = ["James Thorniley <james.thorniley@gmail.com>"]
 edition = "2018"
-
+license = "GPL-3.0-or-later"
+license-file = "COPYING"
+description = "A crate for handling hexagonal tilings / grids / tesselation"
+readme = "README.md"
+homepage = "https://jthorniley.github.io/hexeng"
+repository = "https://github.com/jthorniley/hexeng"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 nalgebra = "^0.21"
-num-traits = "*"
-find_folder = "0.3.0"
-gfx = "0.18.2"
-gfx_core = "0.9.2"
-gfx_device_gl = "0.16.2"
+num-traits = "0.2.11"
 
 [dev-dependencies]
 csv = "1"
 piston_window = "^0.107"
+find_folder = "0.3.0"
+gfx = "0.18.2"
+gfx_core = "0.9.2"
+gfx_device_gl = "0.16.2"
 serde = { version = "1", features = ["derive"] }
