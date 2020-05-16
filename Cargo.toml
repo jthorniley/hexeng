@@ -4,7 +4,6 @@ version = "0.1.0"
 authors = ["James Thorniley <james.thorniley@gmail.com>"]
 edition = "2018"
 license = "GPL-3.0-or-later"
-license-file = "COPYING"
 description = "A crate for handling hexagonal tilings / grids / tesselation"
 readme = "README.md"
 homepage = "https://jthorniley.github.io/hexeng"
