@@ -1,0 +1,821 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `src/lib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lib.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="shortcut icon" href="../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../hexeng/index.html'><div class='logo-container'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
+<span id="2">  2</span>
+<span id="3">  3</span>
+<span id="4">  4</span>
+<span id="5">  5</span>
+<span id="6">  6</span>
+<span id="7">  7</span>
+<span id="8">  8</span>
+<span id="9">  9</span>
+<span id="10"> 10</span>
+<span id="11"> 11</span>
+<span id="12"> 12</span>
+<span id="13"> 13</span>
+<span id="14"> 14</span>
+<span id="15"> 15</span>
+<span id="16"> 16</span>
+<span id="17"> 17</span>
+<span id="18"> 18</span>
+<span id="19"> 19</span>
+<span id="20"> 20</span>
+<span id="21"> 21</span>
+<span id="22"> 22</span>
+<span id="23"> 23</span>
+<span id="24"> 24</span>
+<span id="25"> 25</span>
+<span id="26"> 26</span>
+<span id="27"> 27</span>
+<span id="28"> 28</span>
+<span id="29"> 29</span>
+<span id="30"> 30</span>
+<span id="31"> 31</span>
+<span id="32"> 32</span>
+<span id="33"> 33</span>
+<span id="34"> 34</span>
+<span id="35"> 35</span>
+<span id="36"> 36</span>
+<span id="37"> 37</span>
+<span id="38"> 38</span>
+<span id="39"> 39</span>
+<span id="40"> 40</span>
+<span id="41"> 41</span>
+<span id="42"> 42</span>
+<span id="43"> 43</span>
+<span id="44"> 44</span>
+<span id="45"> 45</span>
+<span id="46"> 46</span>
+<span id="47"> 47</span>
+<span id="48"> 48</span>
+<span id="49"> 49</span>
+<span id="50"> 50</span>
+<span id="51"> 51</span>
+<span id="52"> 52</span>
+<span id="53"> 53</span>
+<span id="54"> 54</span>
+<span id="55"> 55</span>
+<span id="56"> 56</span>
+<span id="57"> 57</span>
+<span id="58"> 58</span>
+<span id="59"> 59</span>
+<span id="60"> 60</span>
+<span id="61"> 61</span>
+<span id="62"> 62</span>
+<span id="63"> 63</span>
+<span id="64"> 64</span>
+<span id="65"> 65</span>
+<span id="66"> 66</span>
+<span id="67"> 67</span>
+<span id="68"> 68</span>
+<span id="69"> 69</span>
+<span id="70"> 70</span>
+<span id="71"> 71</span>
+<span id="72"> 72</span>
+<span id="73"> 73</span>
+<span id="74"> 74</span>
+<span id="75"> 75</span>
+<span id="76"> 76</span>
+<span id="77"> 77</span>
+<span id="78"> 78</span>
+<span id="79"> 79</span>
+<span id="80"> 80</span>
+<span id="81"> 81</span>
+<span id="82"> 82</span>
+<span id="83"> 83</span>
+<span id="84"> 84</span>
+<span id="85"> 85</span>
+<span id="86"> 86</span>
+<span id="87"> 87</span>
+<span id="88"> 88</span>
+<span id="89"> 89</span>
+<span id="90"> 90</span>
+<span id="91"> 91</span>
+<span id="92"> 92</span>
+<span id="93"> 93</span>
+<span id="94"> 94</span>
+<span id="95"> 95</span>
+<span id="96"> 96</span>
+<span id="97"> 97</span>
+<span id="98"> 98</span>
+<span id="99"> 99</span>
+<span id="100">100</span>
+<span id="101">101</span>
+<span id="102">102</span>
+<span id="103">103</span>
+<span id="104">104</span>
+<span id="105">105</span>
+<span id="106">106</span>
+<span id="107">107</span>
+<span id="108">108</span>
+<span id="109">109</span>
+<span id="110">110</span>
+<span id="111">111</span>
+<span id="112">112</span>
+<span id="113">113</span>
+<span id="114">114</span>
+<span id="115">115</span>
+<span id="116">116</span>
+<span id="117">117</span>
+<span id="118">118</span>
+<span id="119">119</span>
+<span id="120">120</span>
+<span id="121">121</span>
+<span id="122">122</span>
+<span id="123">123</span>
+<span id="124">124</span>
+<span id="125">125</span>
+<span id="126">126</span>
+<span id="127">127</span>
+<span id="128">128</span>
+<span id="129">129</span>
+<span id="130">130</span>
+<span id="131">131</span>
+<span id="132">132</span>
+<span id="133">133</span>
+<span id="134">134</span>
+<span id="135">135</span>
+<span id="136">136</span>
+<span id="137">137</span>
+<span id="138">138</span>
+<span id="139">139</span>
+<span id="140">140</span>
+<span id="141">141</span>
+<span id="142">142</span>
+<span id="143">143</span>
+<span id="144">144</span>
+<span id="145">145</span>
+<span id="146">146</span>
+<span id="147">147</span>
+<span id="148">148</span>
+<span id="149">149</span>
+<span id="150">150</span>
+<span id="151">151</span>
+<span id="152">152</span>
+<span id="153">153</span>
+<span id="154">154</span>
+<span id="155">155</span>
+<span id="156">156</span>
+<span id="157">157</span>
+<span id="158">158</span>
+<span id="159">159</span>
+<span id="160">160</span>
+<span id="161">161</span>
+<span id="162">162</span>
+<span id="163">163</span>
+<span id="164">164</span>
+<span id="165">165</span>
+<span id="166">166</span>
+<span id="167">167</span>
+<span id="168">168</span>
+<span id="169">169</span>
+<span id="170">170</span>
+<span id="171">171</span>
+<span id="172">172</span>
+<span id="173">173</span>
+<span id="174">174</span>
+<span id="175">175</span>
+<span id="176">176</span>
+<span id="177">177</span>
+<span id="178">178</span>
+<span id="179">179</span>
+<span id="180">180</span>
+<span id="181">181</span>
+<span id="182">182</span>
+<span id="183">183</span>
+<span id="184">184</span>
+<span id="185">185</span>
+<span id="186">186</span>
+<span id="187">187</span>
+<span id="188">188</span>
+<span id="189">189</span>
+<span id="190">190</span>
+<span id="191">191</span>
+<span id="192">192</span>
+<span id="193">193</span>
+<span id="194">194</span>
+<span id="195">195</span>
+<span id="196">196</span>
+<span id="197">197</span>
+<span id="198">198</span>
+<span id="199">199</span>
+<span id="200">200</span>
+<span id="201">201</span>
+<span id="202">202</span>
+<span id="203">203</span>
+<span id="204">204</span>
+<span id="205">205</span>
+<span id="206">206</span>
+<span id="207">207</span>
+<span id="208">208</span>
+<span id="209">209</span>
+<span id="210">210</span>
+<span id="211">211</span>
+<span id="212">212</span>
+<span id="213">213</span>
+<span id="214">214</span>
+<span id="215">215</span>
+<span id="216">216</span>
+<span id="217">217</span>
+<span id="218">218</span>
+<span id="219">219</span>
+<span id="220">220</span>
+<span id="221">221</span>
+<span id="222">222</span>
+<span id="223">223</span>
+<span id="224">224</span>
+<span id="225">225</span>
+<span id="226">226</span>
+<span id="227">227</span>
+<span id="228">228</span>
+<span id="229">229</span>
+<span id="230">230</span>
+<span id="231">231</span>
+<span id="232">232</span>
+<span id="233">233</span>
+<span id="234">234</span>
+<span id="235">235</span>
+<span id="236">236</span>
+<span id="237">237</span>
+<span id="238">238</span>
+<span id="239">239</span>
+<span id="240">240</span>
+<span id="241">241</span>
+<span id="242">242</span>
+<span id="243">243</span>
+<span id="244">244</span>
+<span id="245">245</span>
+<span id="246">246</span>
+<span id="247">247</span>
+<span id="248">248</span>
+<span id="249">249</span>
+<span id="250">250</span>
+<span id="251">251</span>
+<span id="252">252</span>
+<span id="253">253</span>
+<span id="254">254</span>
+<span id="255">255</span>
+<span id="256">256</span>
+<span id="257">257</span>
+<span id="258">258</span>
+<span id="259">259</span>
+<span id="260">260</span>
+<span id="261">261</span>
+<span id="262">262</span>
+<span id="263">263</span>
+<span id="264">264</span>
+<span id="265">265</span>
+<span id="266">266</span>
+<span id="267">267</span>
+<span id="268">268</span>
+<span id="269">269</span>
+<span id="270">270</span>
+<span id="271">271</span>
+<span id="272">272</span>
+<span id="273">273</span>
+<span id="274">274</span>
+<span id="275">275</span>
+<span id="276">276</span>
+<span id="277">277</span>
+<span id="278">278</span>
+<span id="279">279</span>
+<span id="280">280</span>
+<span id="281">281</span>
+<span id="282">282</span>
+<span id="283">283</span>
+<span id="284">284</span>
+<span id="285">285</span>
+<span id="286">286</span>
+<span id="287">287</span>
+<span id="288">288</span>
+<span id="289">289</span>
+<span id="290">290</span>
+<span id="291">291</span>
+<span id="292">292</span>
+<span id="293">293</span>
+<span id="294">294</span>
+<span id="295">295</span>
+<span id="296">296</span>
+<span id="297">297</span>
+<span id="298">298</span>
+<span id="299">299</span>
+<span id="300">300</span>
+<span id="301">301</span>
+<span id="302">302</span>
+<span id="303">303</span>
+<span id="304">304</span>
+<span id="305">305</span>
+<span id="306">306</span>
+<span id="307">307</span>
+<span id="308">308</span>
+<span id="309">309</span>
+<span id="310">310</span>
+<span id="311">311</span>
+<span id="312">312</span>
+<span id="313">313</span>
+<span id="314">314</span>
+<span id="315">315</span>
+<span id="316">316</span>
+<span id="317">317</span>
+<span id="318">318</span>
+<span id="319">319</span>
+<span id="320">320</span>
+<span id="321">321</span>
+<span id="322">322</span>
+<span id="323">323</span>
+<span id="324">324</span>
+<span id="325">325</span>
+<span id="326">326</span>
+<span id="327">327</span>
+<span id="328">328</span>
+<span id="329">329</span>
+<span id="330">330</span>
+<span id="331">331</span>
+<span id="332">332</span>
+<span id="333">333</span>
+<span id="334">334</span>
+<span id="335">335</span>
+<span id="336">336</span>
+<span id="337">337</span>
+<span id="338">338</span>
+<span id="339">339</span>
+<span id="340">340</span>
+<span id="341">341</span>
+<span id="342">342</span>
+<span id="343">343</span>
+<span id="344">344</span>
+<span id="345">345</span>
+<span id="346">346</span>
+<span id="347">347</span>
+<span id="348">348</span>
+<span id="349">349</span>
+<span id="350">350</span>
+<span id="351">351</span>
+<span id="352">352</span>
+<span id="353">353</span>
+<span id="354">354</span>
+<span id="355">355</span>
+<span id="356">356</span>
+<span id="357">357</span>
+<span id="358">358</span>
+<span id="359">359</span>
+<span id="360">360</span>
+<span id="361">361</span>
+<span id="362">362</span>
+<span id="363">363</span>
+<span id="364">364</span>
+<span id="365">365</span>
+<span id="366">366</span>
+<span id="367">367</span>
+<span id="368">368</span>
+<span id="369">369</span>
+<span id="370">370</span>
+<span id="371">371</span>
+<span id="372">372</span>
+<span id="373">373</span>
+<span id="374">374</span>
+<span id="375">375</span>
+<span id="376">376</span>
+<span id="377">377</span>
+<span id="378">378</span>
+<span id="379">379</span>
+<span id="380">380</span>
+<span id="381">381</span>
+<span id="382">382</span>
+<span id="383">383</span>
+<span id="384">384</span>
+<span id="385">385</span>
+<span id="386">386</span>
+<span id="387">387</span>
+<span id="388">388</span>
+<span id="389">389</span>
+<span id="390">390</span>
+<span id="391">391</span>
+<span id="392">392</span>
+<span id="393">393</span>
+<span id="394">394</span>
+<span id="395">395</span>
+<span id="396">396</span>
+<span id="397">397</span>
+<span id="398">398</span>
+<span id="399">399</span>
+<span id="400">400</span>
+<span id="401">401</span>
+<span id="402">402</span>
+<span id="403">403</span>
+<span id="404">404</span>
+<span id="405">405</span>
+<span id="406">406</span>
+<span id="407">407</span>
+<span id="408">408</span>
+<span id="409">409</span>
+</pre><div class="example-wrap"><pre class="rust ">
+<span class="doccomment">//! hexeng: a crate for handling hexagonal tilings / grids / tesselation.</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! Provides calculations on hexagonal tiles, using</span>
+<span class="doccomment">//! [nalgebra](http://www.nalgebra.org) for underlying linear algebra and</span>
+<span class="doccomment">//! data structures.</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! # Coordinate frames</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! The core concept of this crate is the coordinate frame, represented by the</span>
+<span class="doccomment">//! [Frame](trait.Frame.html) trait. There are three coordinate frames:</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! * Axial coordinates - pairs of integers which uniquely identify a hexagon</span>
+<span class="doccomment">//!   on the grid.</span>
+<span class="doccomment">//! * World coordinates - a pair of floats representing a point in a continuous</span>
+<span class="doccomment">//!   space.</span>
+<span class="doccomment">//! * View coordinates - an arbitrary non-singular matrix transfomation on the</span>
+<span class="doccomment">//!   world coordinates.</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! It is possible to convert coordinates between a pair of frames. The</span>
+<span class="doccomment">//! conversion from Axial to World determines a 2D Euclidean location for each</span>
+<span class="doccomment">//! hexagon on the grid. The conversion from World to View is intended to allow</span>
+<span class="doccomment">//! the grid to be displayed with arbitrary scale/rotation (etc) on a display.</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! ## Axial to/from World conversions</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! The axial coordinates are pairs of integers like `0, 1`, or `-10, -4`.</span>
+<span class="doccomment">//! The conversion to the &quot;World&quot; frame is a fixed mapping shown in the image</span>
+<span class="doccomment">//! below.</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! &lt;div&gt;</span>
+<span class="doccomment">//! &lt;img src=&quot;data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiIHN0YW5kYWxvbmU9Im5vIj8+CjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIKICAiaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkIj4KPCEtLSBDcmVhdGVkIHdpdGggbWF0cGxvdGxpYiAoaHR0cHM6Ly9tYXRwbG90bGliLm9yZy8pIC0tPgo8c3ZnIGhlaWdodD0iNTc2cHQiIHZlcnNpb249IjEuMSIgdmlld0JveD0iMCAwIDU3NiA1NzYiIHdpZHRoPSI1NzZwdCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+CiA8ZGVmcz4KICA8c3R5bGUgdHlwZT0idGV4dC9jc3MiPgoqe3N0cm9rZS1saW5lY2FwOmJ1dHQ7c3Ryb2tlLWxpbmVqb2luOnJvdW5kO30KICA8L3N0eWxlPgogPC9kZWZzPgogPGcgaWQ9ImZpZ3VyZV8xIj4KICA8ZyBpZD0icGF0Y2hfMSI+CiAgIDxwYXRoIGQ9Ik0gMCA1NzYgCkwgNTc2IDU3NiAKTCA1NzYgMCAKTCAwIDAgCnoKIiBzdHlsZT0iZmlsbDojZmZmZmZmOyIvPgogIDwvZz4KICA8ZyBpZD0iYXhlc18xIj4KICAgPGcgaWQ9InBhdGNoXzIiPgogICAgPHBhdGggZD0iTSA3MiA1MDQgCkwgNTE4LjQgNTA0IApMIDUxOC40IDY5LjEyIApMIDcyIDY5LjEyIAp6CiIgc3R5bGU9ImZpbGw6I2ZmZmZmZjsiLz4KICAgPC9nPgogICA8ZyBpZD0icGF0Y2hfMyI+CiAgICA8cGF0aCBjbGlwLXBhdGg9InVybCgjcDgyYmNiMzBkMDYpIiBkPSJNIDE3My40NTQ1NDUgNDMxLjUyIApMIDE0Ni40IDQwNS4xNjM2MzYgCkwgMTE5LjM0NTQ1NSA0MDUuMTYzNjM2IApMIDkyLjI5MDkwOSA0MzEuNTIgCkwgMTE5LjM0NTQ1NSA0NTcuODc2MzY0IApMIDE0Ni40IDQ1Ny44NzYzNjQgCnoKIiBzdHlsZT0iZmlsbDojYWY1NTcwO3N0cm9rZTojYWY1NTcwO3N0cm9rZS1saW5lam9pbjptaXRlcjsiLz4KICAgPC9nPgogICA8ZyBpZD0icGF0Y2hfNCI+CiAgICA8cGF0aCBjbGlwLXBhdGg9InVybCgjcDgyYmNiMzBkMDYpIiBkPSJNIDE3My40NTQ1NDUgMzc4LjgwNzI3MyAKTCAxNDYuNCAzNTIuNDUwOTA5IApMIDExOS4zNDU0NTUgMzUyLjQ1MDkwOSAKTCA5Mi4yOTA5MDkgMzc4LjgwNzI3MyAKTCAxMTkuMzQ1NDU1IDQwNS4xNjM2MzYgCkwgMTQ2LjQgNDA1LjE2MzYzNiAKegoiIHN0eWxlPSJmaWxsOiMwMWFjZWM7c3Ryb2tlOiMwMWFjZWM7c3Ryb2tlLWxpbmVqb2luOm1pdGVyOyIvPgogICA8L2c+CiAgIDxnIGlkPSJwYXRjaF81Ij4KICAgIDxwYXRoIGNsaXAtcGF0aD0idXJsKCNwODJiY2IzMGQwNikiIGQ9Ik0gMTczLjQ1NDU0NSAzMjYuMDk0NTQ1IApMIDE0Ni40IDI5OS43MzgxODIgCkwgMTE5LjM0NTQ1NSAyOTkuNzM4MTgyIApMIDkyLjI5MDkwOSAzMjYuMDk0NTQ1IApMIDExOS4zNDU0NTUgMzUyLjQ1MDkwOSAKTCAxNDYuNCAzNTIuNDUwOTA5IAp6CiIgc3R5bGU9ImZpbGw6IzJmY2QxNTtzdHJva2U6IzJmY2QxNTtzdHJva2UtbGluZWpvaW46bWl0ZXI7Ii8+CiAgIDwvZz4KICAgPGcgaWQ9InBhdGNoXzYiPgogICAgPHBhdGggY2xpcC1wYXRoPSJ1cmwoI3A4MmJjYjMwZDA2KSIgZD0iTSAxNzMuNDU0NTQ1IDI3My4zODE4MTggCkwgMTQ2LjQgMjQ3LjAyNTQ1NSAKTCAxMTkuMzQ1NDU1IDI0Ny4wMjU0NTUgCkwgOTIuMjkwOTA5IDI3My4zODE4MTggCkwgMTE5LjM0NTQ1NSAyOTkuNzM4MTgyIApMIDE0Ni40IDI5OS43MzgxODIgCnoKIiBzdHlsZT0iZmlsbDojOWFlNGM5O3N0cm9rZTojOWFlNGM5O3N0cm9rZS1saW5lam9pbjptaXRlcjsiLz4KICAgPC9nPgogICA8ZyBpZD0icGF0Y2hfNyI+CiAgICA8cGF0aCBjbGlwLXBhdGg9InVybCgjcDgyYmNiMzBkMDYpIiBkPSJNIDE3My40NTQ1NDUgMjIwLjY2OTA5MSAKTCAxNDYuNCAxOTQuMzEyNzI3IApMIDExOS4zNDU0NTUgMTk0LjMxMjcyNyAKTCA5Mi4yOTA5MDkgMjIwLjY2OTA5MSAKTCAxMTkuMzQ1NDU1IDI0Ny4wMjU0NTUgCkwgMTQ2LjQgMjQ3LjAyNTQ1NSAKegoiIHN0eWxlPSJmaWxsOiMxYjAzYWI7c3Ryb2tlOiMxYjAzYWI7c3Ryb2tlLWxpbmVqb2luOm1pdGVyOyIvPgogICA8L2c+CiAgIDxnIGlkPSJwYXRjaF84Ij4KICAgIDxwYXRoIGNsaXAtcGF0aD0idXJsKCNwODJiY2IzMGQwNikiIGQ9Ik0gMTczLjQ1NDU0NSAxNjcuOTU2MzY0IApMIDE0Ni40IDE0MS42IApMIDExOS4zNDU0NTUgMTQxLjYgCkwgOTIuMjkwOTA5IDE2Ny45NTYzNjQgCkwgMTE5LjM0NTQ1NSAxOTQuMzEyNzI3IApMIDE0Ni40IDE5NC4zMTI3MjcgCnoKIiBzdHlsZT0iZmlsbDojMmJlMjE5O3N0cm9rZTojMmJlMjE5O3N0cm9rZS1saW5lam9pbjptaXRlcjsiLz4KICAgPC9nPgogICA8ZyBpZD0icGF0Y2hfOSI+CiAgICA8cGF0aCBjbGlwLXBhdGg9InVybCgjcDgyYmNiMzBkMDYpIiBkPSJNIDE3My40NTQ1NDUgMTE1LjI0MzYzNiAKTCAxNDYuNCA4OC44ODcyNzMgCkwgMTE5LjM0NTQ1NSA4OC44ODcyNzMgCkwgOTIuMjkwOTA5IDExNS4yNDM2MzYgCkwgMTE5LjM0NTQ1NSAxNDEuNiAKTCAxNDYuNCAxNDEuNiAKegoiIHN0eWxlPSJmaWxsOiMyMGFlZjA7c3Ryb2tlOiMyMGFlZjA7c3Ryb2tlLWxpbmVqb2luOm1pdGVyOyIvPgogICA8L2c+CiAgIDxnIGlkPSJwYXRjaF8xMCI+CiAgICA8cGF0aCBjbGlwLXBhdGg9InVybCgjcDgyYmNiMzBkMDYpIiBkPSJNIDIyNy41NjM2MzYgNDU3Ljg3NjM2NCAKTCAyMDAuNTA5MDkxIDQzMS41MiAKTCAxNzMuNDU0NTQ1IDQzMS41MiAKTCAxNDYuNCA0NTcuODc2MzY0IApMIDE3My40NTQ1NDUgNDg0LjIzMjcyNyAKTCAyMDAuNTA5MDkxIDQ4NC4yMzI3MjcgCnoKIiBzdHlsZT0iZmlsbDojN2M5ZmExO3N0cm9rZTojN2M5ZmExO3N0cm9rZS1saW5lam9pbjptaXRlcjsiLz4KICAgPC9nPgogICA8ZyBpZD0icGF0Y2hfMTEiPgogICAgPHBhdGggY2xpcC1wYXRoPSJ1cmwoI3A4MmJjYjMwZDA2KSIgZD0iTSAyMjcuNTYzNjM2IDQwNS4xNjM2MzYgCkwgMjAwLjUwOTA5MSAzNzguODA3MjczIApMIDE3My40NTQ1NDUgMzc4LjgwNzI3MyAKTCAxNDYuNCA0MDUuMTYzNjM2IApMIDE3My40NTQ1NDUgNDMxLjUyIApMIDIwMC41MDkwOTEgNDMxLjUyIAp6CiIgc3R5bGU9ImZpbGw6IzY0ZWQ4NjtzdHJva2U6IzY0ZWQ4NjtzdHJva2UtbGluZWpvaW46bWl0ZXI7Ii8+CiAgIDwvZz4KICAgPGcgaWQ9InBhdGNoXzEyIj4KICAgIDxwYXRoIGNsaXAtcGF0aD0idXJsKCNwODJiY2IzMGQwNikiIGQ9Ik0gMjI3LjU2MzYzNiAzNTIuNDUwOTA5IApMIDIwMC41MDkwOTEgMzI2LjA5NDU0NSAKTCAxNzMuNDU0NTQ1IDMyNi4wOTQ1NDUgCkwgMTQ2LjQgMzUyLjQ1MDkwOSAKTCAxNzMuNDU0NTQ1IDM3OC44MDcyNzMgCkwgMjAwLjUwOTA5MSAzNzguODA3MjczIAp6CiIgc3R5bGU9ImZpbGw6IzM0ZmI1YztzdHJva2U6IzM0ZmI1YztzdHJva2UtbGluZWpvaW46bWl0ZXI7Ii8+CiAgIDwvZz4KICAgPGcgaWQ9InBhdGNoXzEzIj4KICAgIDxwYXRoIGNsaXAtcGF0aD0idXJsKCNwODJiY2IzMGQwNikiIGQ9Ik0gMjI3LjU2MzYzNiAyOTkuNzM4MTgyIApMIDIwMC41MDkwOTEgMjczLjM4MTgxOCAKTCAxNzMuNDU0NTQ1IDI3My4zODE4MTggCkwgMTQ2LjQgMjk5LjczODE4MiAKTCAxNzMuNDU0NTQ1IDMyNi4wOTQ1NDUgCkwgMjAwLjUwOTA5MSAzMjYuMDk0NTQ1IAp6CiIgc3R5bGU9ImZpbGw6IzMwNjU2YjtzdHJva2U6IzMwNjU2YjtzdHJva2UtbGluZWpvaW46bWl0ZXI7Ii8+CiAgIDwvZz4KICAgPGcgaWQ9InBhdGNoXzE0Ij4KICAgIDxwYXRoIGNsaXAtcGF0aD0idXJsKCNwODJiY2IzMGQwNikiIGQ9Ik0gMjI3LjU2MzYzNiAyNDcuMDI1NDU1IApMIDIwMC41MDkwOTEgMjIwLjY2OTA5MSAKTCAxNzMuNDU0NTQ1IDIyMC42NjkwOTEgCkwgMTQ2LjQgMjQ3LjAyNTQ1NSAKTCAxNzMuNDU0NTQ1IDI3My4zODE4MTggCkwgMjAwLjUwOTA5MSAyNzMuMzgxODE4IAp6CiIgc3R5bGU9ImZpbGw6Izc3ZWU3YztzdHJva2U6Izc3ZWU3YztzdHJva2UtbGluZWpvaW46bWl0ZXI7Ii8+CiAgIDwvZz4KICAgPGcgaWQ9InBhdGNoXzE1Ij4KICAgIDxwYXRoIGNsaXAtcGF0aD0idXJsKCNwODJiY2IzMGQwNikiIGQ9Ik0gMjI3LjU2MzYzNiAxOTQuMzEyNzI3IApMIDIwMC41MDkwOTEgMTY3Ljk1NjM2NCAKTCAxNzMuNDU0NTQ1IDE2Ny45NTYzNjQgCkwgMTQ2LjQgMTk0LjMxMjcyNyAKTCAxNzMuNDU0NTQ1IDIyMC42NjkwOTEgCkwgMjAwLjUwOTA5MSAyMjAuNjY5MDkxIAp6CiIgc3R5bGU9ImZpbGw6I2VjYTc1ZjtzdHJva2U6I2VjYTc1ZjtzdHJva2UtbGluZWpvaW46bWl0ZXI7Ii8+CiAgIDwvZz4KICAgPGcgaWQ9InBhdGNoXzE2Ij4KICAgIDxwYXRoIGNsaXAtcGF0aD0idXJsKCNwODJiY2IzMGQwNikiIGQ9Ik0gMjI3LjU2MzYzNiAxNDEuNiAKTCAyMDAuNTA5MDkxIDExNS4yNDM2MzYgCkwgMTczLjQ1NDU0NSAxMTUuMjQzNjM2IApMIDE0Ni40IDE0MS42IApMIDE3My40NTQ1NDUgMTY3Ljk1NjM2NCAKTCAyMDAuNTA5MDkxIDE2Ny45NTYzNjQgCnoKIiBzdHlsZT0iZmlsbDojOTcxZTA2O3N0cm9rZTojOTcxZTA2O3N0cm9rZS1saW5lam9pbjptaXRlcjsiLz4KICAgPC9nPgogICA8ZyBpZD0icGF0Y2hfMTciPgogICAgPHBhdGggY2xpcC1wYXRoPSJ1cmwoI3A4MmJjYjMwZDA2KSIgZD0iTSAyODEuNjcyNzI3IDQzMS41MiAKTCAyNTQuNjE4MTgyIDQwNS4xNjM2MzYgCkwgMjI3LjU2MzYzNiA0MDUuMTYzNjM2IApMIDIwMC41MDkwOTEgNDMxLjUyIApMIDIyNy41NjM2MzYgNDU3Ljg3NjM2NCAKTCAyNTQuNjE4MTgyIDQ1Ny44NzYzNjQgCnoKIiBzdHlsZT0iZmlsbDojN2IyZWQ2O3N0cm9rZTojN2IyZWQ2O3N0cm9rZS1saW5lam9pbjptaXRlcjsiLz4KICAgPC9nPgogICA8ZyBpZD0icGF0Y2hfMTgiPgogICAgPHBhdGggY2xpcC1wYXRoPSJ1cmwoI3A4MmJjYjMwZDA2KSIgZD0iTSAyODEuNjcyNzI3IDM3OC44MDcyNzMgCkwgMjU0LjYxODE4MiAzNTIuNDUwOTA5IApMIDIyNy41NjM2MzYgMzUyLjQ1MDkwOSAKTCAyMDAuNTA5MDkxIDM3OC44MDcyNzMgCkwgMjI3LjU2MzYzNiA0MDUuMTYzNjM2IApMIDI1NC42MTgxODIgNDA1LjE2MzYzNiAKegoiIHN0eWxlPSJmaWxsOiM0MWQ4MDU7c3Ryb2tlOiM0MWQ4MDU7c3Ryb2tlLWxpbmVqb2luOm1pdGVyOyIvPgogICA8L2c+CiAgIDxnIGlkPSJwYXRjaF8xOSI+CiAgICA8cGF0aCBjbGlwLXBhdGg9InVybCgjcDgyYmNiMzBkMDYpIiBkPSJNIDI4MS42NzI3MjcgMzI2LjA5NDU0NSAKTCAyNTQuNjE4MTgyIDI5OS43MzgxODIgCkwgMjI3LjU2MzYzNiAyOTkuNzM4MTgyIApMIDIwMC41MDkwOTEgMzI2LjA5NDU0NSAKTCAyMjcuNTYzNjM2IDM1Mi40NTA5MDkgCkwgMjU0LjYxODE4MiAzNTIuNDUwOTA5IAp6CiIgc3R5bGU9ImZpbGw6IzBjNDBmYztzdHJva2U6IzBjNDBmYztzdHJva2UtbGluZWpvaW46bWl0ZXI7Ii8+CiAgIDwvZz4KICAgPGcgaWQ9InBhdGNoXzIwIj4KICAgIDxwYXRoIGNsaXAtcGF0aD0idXJsKCNwODJiY2IzMGQwNikiIGQ9Ik0gMjgxLjY3MjcyNyAyNzMuMzgxODE4IApMIDI1NC42MTgxODIgMjQ3LjAyNTQ1NSAKTCAyMjcuNTYzNjM2IDI0Ny4wMjU0NTUgCkwgMjAwLjUwOTA5MSAyNzMuMzgxODE4IApMIDIyNy41NjM2MzYgMjk5LjczODE4MiAKTCAyNTQuNjE4MTgyIDI5OS43MzgxODIgCnoKIiBzdHlsZT0iZmlsbDojNTgyMWUwO3N0cm9rZTojNTgyMWUwO3N0cm9rZS1saW5lam9pbjptaXRlcjsiLz4KICAgPC9nPgogICA8ZyBpZD0icGF0Y2hfMjEiPgogICAgPHBhdGggY2xpcC1wYXRoPSJ1cmwoI3A4MmJjYjMwZDA2KSIgZD0iTSAyODEuNjcyNzI3IDIyMC42NjkwOTEgCkwgMjU0LjYxODE4MiAxOTQuMzEyNzI3IApMIDIyNy41NjM2MzYgMTk0LjMxMjcyNyAKTCAyMDAuNTA5MDkxIDIyMC42NjkwOTEgCkwgMjI3LjU2MzYzNiAyNDcuMDI1NDU1IApMIDI1NC42MTgxODIgMjQ3LjAyNTQ1NSAKegoiIHN0eWxlPSJmaWxsOiNhMDFmZDc7c3Ryb2tlOiNhMDFmZDc7c3Ryb2tlLWxpbmVqb2luOm1pdGVyOyIvPgogICA8L2c+CiAgIDxnIGlkPSJwYXRjaF8yMiI+CiAgICA8cGF0aCBjbGlwLXBhdGg9InVybCgjcDgyYmNiMzBkMDYpIiBkPSJNIDI4MS42NzI3MjcgMTY3Ljk1NjM2NCAKTCAyNTQuNjE4MTgyIDE0MS42IApMIDIyNy41NjM2MzYgMTQxLjYgCkwgMjAwLjUwOTA5MSAxNjcuOTU2MzY0IApMIDIyNy41NjM2MzYgMTk0LjMxMjcyNyAKTCAyNTQuNjE4MTgyIDE5NC4zMTI3MjcgCnoKIiBzdHlsZT0iZmlsbDojNTJlMzAyO3N0cm9rZTojNTJlMzAyO3N0cm9rZS1saW5lam9pbjptaXRlcjsiLz4KICAgPC9nPgogICA8ZyBpZD0icGF0Y2hfMjMiPgogICAgPHBhdGggY2xpcC1wYXRoPSJ1cmwoI3A4MmJjYjMwZDA2KSIgZD0iTSAyODEuNjcyNzI3IDExNS4yNDM2MzYgCkwgMjU0LjYxODE4MiA4OC44ODcyNzMgCkwgMjI3LjU2MzYzNiA4OC44ODcyNzMgCkwgMjAwLjUwOTA5MSAxMTUuMjQzNjM2IApMIDIyNy41NjM2MzYgMTQxLjYgCkwgMjU0LjYxODE4MiAxNDEuNiAKegoiIHN0eWxlPSJmaWxsOiMyZDY3ZWY7c3Ryb2tlOiMyZDY3ZWY7c3Ryb2tlLWxpbmVqb2luOm1pdGVyOyIvPgogICA8L2c+CiAgIDxnIGlkPSJwYXRjaF8yNCI+CiAgICA8cGF0aCBjbGlwLXBhdGg9InVybCgjcDgyYmNiMzBkMDYpIiBkPSJNIDMzNS43ODE4MTggNDU3Ljg3NjM2NCAKTCAzMDguNzI3MjczIDQzMS41MiAKTCAyODEuNjcyNzI3IDQzMS41MiAKTCAyNTQuNjE4MTgyIDQ1Ny44NzYzNjQgCkwgMjgxLjY3MjcyNyA0ODQuMjMyNzI3IApMIDMwOC43MjcyNzMgNDg0LjIzMjcyNyAKegoiIHN0eWxlPSJmaWxsOiNmNWJkN2M7c3Ryb2tlOiNmNWJkN2M7c3Ryb2tlLWxpbmVqb2luOm1pdGVyOyIvPgogICA8L2c+CiAgIDxnIGlkPSJwYXRjaF8yNSI+CiAgICA8cGF0aCBjbGlwLXBhdGg9InVybCgjcDgyYmNiMzBkMDYpIiBkPSJNIDMzNS43ODE4MTggNDA1LjE2MzYzNiAKTCAzMDguNzI3MjczIDM3OC44MDcyNzMgCkwgMjgxLjY3MjcyNyAzNzguODA3MjczIApMIDI1NC42MTgxODIgNDA1LjE2MzYzNiAKTCAyODEuNjcyNzI3IDQzMS41MiAKTCAzMDguNzI3MjczIDQzMS41MiAKegoiIHN0eWxlPSJmaWxsOiM3YzAzOWE7c3Ryb2tlOiM3YzAzOWE7c3Ryb2tlLWxpbmVqb2luOm1pdGVyOyIvPgogICA8L2c+CiAgIDxnIGlkPSJwYXRjaF8yNiI+CiAgICA8cGF0aCBjbGlwLXBhdGg9InVybCgjcDgyYmNiMzBkMDYpIiBkPSJNIDMzNS43ODE4MTggMzUyLjQ1MDkwOSAKTCAzMDguNzI3MjczIDMyNi4wOTQ1NDUgCkwgMjgxLjY3MjcyNyAzMjYuMDk0NTQ1IApMIDI1NC42MTgxODIgMzUyLjQ1MDkwOSAKTCAyODEuNjcyNzI3IDM3OC44MDcyNzMgCkwgMzA4LjcyNzI3MyAzNzguODA3MjczIAp6CiIgc3R5bGU9ImZpbGw6I2Y5ODE1ZDtzdHJva2U6I2Y5ODE1ZDtzdHJva2UtbGluZWpvaW46bWl0ZXI7Ii8+CiAgIDwvZz4KICAgPGcgaWQ9InBhdGNoXzI3Ij4KICAgIDxwYXRoIGNsaXAtcGF0aD0idXJsKCNwODJiY2IzMGQwNikiIGQ9Ik0gMzM1Ljc4MTgxOCAyOTkuNzM4MTgyIApMIDMwOC43MjcyNzMgMjczLjM4MTgxOCAKTCAyODEuNjcyNzI3IDI3My4zODE4MTggCkwgMjU0LjYxODE4MiAyOTkuNzM4MTgyIApMIDI4MS42NzI3MjcgMzI2LjA5NDU0NSAKTCAzMDguNzI3MjczIDMyNi4wOTQ1NDUgCnoKIiBzdHlsZT0iZmlsbDojODA3M2M5O3N0cm9rZTojODA3M2M5O3N0cm9rZS1saW5lam9pbjptaXRlcjsiLz4KICAgPC9nPgogICA8ZyBpZD0icGF0Y2hfMjgiPgogICAgPHBhdGggY2xpcC1wYXRoPSJ1cmwoI3A4MmJjYjMwZDA2KSIgZD0iTSAzMzUuNzgxODE4IDI0Ny4wMjU0NTUgCkwgMzA4LjcyNzI3MyAyMjAuNjY5MDkxIApMIDI4MS42NzI3MjcgMjIwLjY2OTA5MSAKTCAyNTQuNjE4MTgyIDI0Ny4wMjU0NTUgCkwgMjgxLjY3MjcyNyAyNzMuMzgxODE4IApMIDMwOC43MjcyNzMgMjczLjM4MTgxOCAKegoiIHN0eWxlPSJmaWxsOiMzYmVmMGE7c3Ryb2tlOiMzYmVmMGE7c3Ryb2tlLWxpbmVqb2luOm1pdGVyOyIvPgogICA8L2c+CiAgIDxnIGlkPSJwYXRjaF8yOSI+CiAgICA8cGF0aCBjbGlwLXBhdGg9InVybCgjcDgyYmNiMzBkMDYpIiBkPSJNIDMzNS43ODE4MTggMTk0LjMxMjcyNyAKTCAzMDguNzI3MjczIDE2Ny45NTYzNjQgCkwgMjgxLjY3MjcyNyAxNjcuOTU2MzY0IApMIDI1NC42MTgxODIgMTk0LjMxMjcyNyAKTCAyODEuNjcyNzI3IDIyMC42NjkwOTEgCkwgMzA4LjcyNzI3MyAyMjAuNjY5MDkxIAp6CiIgc3R5bGU9ImZpbGw6I2EyNjFmZDtzdHJva2U6I2EyNjFmZDtzdHJva2UtbGluZWpvaW46bWl0ZXI7Ii8+CiAgIDwvZz4KICAgPGcgaWQ9InBhdGNoXzMwIj4KICAgIDxwYXRoIGNsaXAtcGF0aD0idXJsKCNwODJiY2IzMGQwNikiIGQ9Ik0gMzM1Ljc4MTgxOCAxNDEuNiAKTCAzMDguNzI3MjczIDExNS4yNDM2MzYgCkwgMjgxLjY3MjcyNyAxMTUuMjQzNjM2IApMIDI1NC42MTgxODIgMTQxLjYgCkwgMjgxLjY3MjcyNyAxNjcuOTU2MzY0IApMIDMwOC43MjcyNzMgMTY3Ljk1NjM2NCAKegoiIHN0eWxlPSJmaWxsOiNkMWEwMWY7c3Ryb2tlOiNkMWEwMWY7c3Ryb2tlLWxpbmVqb2luOm1pdGVyOyIvPgogICA8L2c+CiAgIDxnIGlkPSJwYXRjaF8zMSI+CiAgICA8cGF0aCBjbGlwLXBhdGg9InVybCgjcDgyYmNiMzBkMDYpIiBkPSJNIDM4OS44OTA5MDkgNDMxLjUyIApMIDM2Mi44MzYzNjQgNDA1LjE2MzYzNiAKTCAzMzUuNzgxODE4IDQwNS4xNjM2MzYgCkwgMzA4LjcyNzI3MyA0MzEuNTIgCkwgMzM1Ljc4MTgxOCA0NTcuODc2MzY0IApMIDM2Mi44MzYzNjQgNDU3Ljg3NjM2NCAKegoiIHN0eWxlPSJmaWxsOiM0ZjlmZTA7c3Ryb2tlOiM0ZjlmZTA7c3Ryb2tlLWxpbmVqb2luOm1pdGVyOyIvPgogICA8L2c+CiAgIDxnIGlkPSJwYXRjaF8zMiI+CiAgICA8cGF0aCBjbGlwLXBhdGg9InVybCgjcDgyYmNiMzBkMDYpIiBkPSJNIDM4OS44OTA5MDkgMzc4LjgwNzI3MyAKTCAzNjIuODM2MzY0IDM1Mi40NTA5MDkgCkwgMzM1Ljc4MTgxOCAzNTIuNDUwOTA5IApMIDMwOC43MjcyNzMgMzc4LjgwNzI3MyAKTCAzMzUuNzgxODE4IDQwNS4xNjM2MzYgCkwgMzYyLjgzNjM2NCA0MDUuMTYzNjM2IAp6CiIgc3R5bGU9ImZpbGw6IzA4MGQ1NztzdHJva2U6IzA4MGQ1NztzdHJva2UtbGluZWpvaW46bWl0ZXI7Ii8+CiAgIDwvZz4KICAgPGcgaWQ9InBhdGNoXzMzIj4KICAgIDxwYXRoIGNsaXAtcGF0aD0idXJsKCNwODJiY2IzMGQwNikiIGQ9Ik0gMzg5Ljg5MDkwOSAzMjYuMDk0NTQ1IApMIDM2Mi44MzYzNjQgMjk5LjczODE4MiAKTCAzMzUuNzgxODE4IDI5OS43MzgxODIgCkwgMzA4LjcyNzI3MyAzMjYuMDk0NTQ1IApMIDMzNS43ODE4MTggMzUyLjQ1MDkwOSAKTCAzNjIuODM2MzY0IDM1Mi40NTA5MDkgCnoKIiBzdHlsZT0iZmlsbDojMjY3ODMzO3N0cm9rZTojMjY3ODMzO3N0cm9rZS1saW5lam9pbjptaXRlcjsiLz4KICAgPC9nPgogICA8ZyBpZD0icGF0Y2hfMzQiPgogICAgPHBhdGggY2xpcC1wYXRoPSJ1cmwoI3A4MmJjYjMwZDA2KSIgZD0iTSAzODkuODkwOTA5IDI3My4zODE4MTggCkwgMzYyLjgzNjM2NCAyNDcuMDI1NDU1IApMIDMzNS43ODE4MTggMjQ3LjAyNTQ1NSAKTCAzMDguNzI3MjczIDI3My4zODE4MTggCkwgMzM1Ljc4MTgxOCAyOTkuNzM4MTgyIApMIDM2Mi44MzYzNjQgMjk5LjczODE4MiAKegoiIHN0eWxlPSJmaWxsOiMwNGNmNjA7c3Ryb2tlOiMwNGNmNjA7c3Ryb2tlLWxpbmVqb2luOm1pdGVyOyIvPgogICA8L2c+CiAgIDxnIGlkPSJwYXRjaF8zNSI+CiAgICA8cGF0aCBjbGlwLXBhdGg9InVybCgjcDgyYmNiMzBkMDYpIiBkPSJNIDM4OS44OTA5MDkgMjIwLjY2OTA5MSAKTCAzNjIuODM2MzY0IDE5NC4zMTI3MjcgCkwgMzM1Ljc4MTgxOCAxOTQuMzEyNzI3IApMIDMwOC43MjcyNzMgMjIwLjY2OTA5MSAKTCAzMzUuNzgxODE4IDI0Ny4wMjU0NTUgCkwgMzYyLjgzNjM2NCAyNDcuMDI1NDU1IAp6CiIgc3R5bGU9ImZpbGw6IzM5ZTVhMjtzdHJva2U6IzM5ZTVhMjtzdHJva2UtbGluZWpvaW46bWl0ZXI7Ii8+CiAgIDwvZz4KICAgPGcgaWQ9InBhdGNoXzM2Ij4KICAgIDxwYXRoIGNsaXAtcGF0aD0idXJsKCNwODJiY2IzMGQwNikiIGQ9Ik0gMzg5Ljg5MDkwOSAxNjcuOTU2MzY0IApMIDM2Mi44MzYzNjQgMTQxLjYgCkwgMzM1Ljc4MTgxOCAxNDEuNiAKTCAzMDguNzI3MjczIDE2Ny45NTYzNjQgCkwgMzM1Ljc4MTgxOCAxOTQuMzEyNzI3IApMIDM2Mi44MzYzNjQgMTk0LjMxMjcyNyAKegoiIHN0eWxlPSJmaWxsOiMzNTcxYmM7c3Ryb2tlOiMzNTcxYmM7c3Ryb2tlLWxpbmVqb2luOm1pdGVyOyIvPgogICA8L2c+CiAgIDxnIGlkPSJwYXRjaF8zNyI+CiAgICA8cGF0aCBjbGlwLXBhdGg9InVybCgjcDgyYmNiMzBkMDYpIiBkPSJNIDM4OS44OTA5MDkgMTE1LjI0MzYzNiAKTCAzNjIuODM2MzY0IDg4Ljg4NzI3MyAKTCAzMzUuNzgxODE4IDg4Ljg4NzI3MyAKTCAzMDguNzI3MjczIDExNS4yNDM2MzYgCkwgMzM1Ljc4MTgxOCAxNDEuNiAKTCAzNjIuODM2MzY0IDE0MS42IAp6CiIgc3R5bGU9ImZpbGw6I2UzMTY3NDtzdHJva2U6I2UzMTY3NDtzdHJva2UtbGluZWpvaW46bWl0ZXI7Ii8+CiAgIDwvZz4KICAgPGcgaWQ9InBhdGNoXzM4Ij4KICAgIDxwYXRoIGNsaXAtcGF0aD0idXJsKCNwODJiY2IzMGQwNikiIGQ9Ik0gNDQ0IDQ1Ny44NzYzNjQgCkwgNDE2Ljk0NTQ1NSA0MzEuNTIgCkwgMzg5Ljg5MDkwOSA0MzEuNTIgCkwgMzYyLjgzNjM2NCA0NTcuODc2MzY0IApMIDM4OS44OTA5MDkgNDg0LjIzMjcyNyAKTCA0MTYuOTQ1NDU1IDQ4NC4yMzI3MjcgCnoKIiBzdHlsZT0iZmlsbDojZmMyOTg0O3N0cm9rZTojZmMyOTg0O3N0cm9rZS1saW5lam9pbjptaXRlcjsiLz4KICAgPC9nPgogICA8ZyBpZD0icGF0Y2hfMzkiPgogICAgPHBhdGggY2xpcC1wYXRoPSJ1cmwoI3A4MmJjYjMwZDA2KSIgZD0iTSA0NDQgNDA1LjE2MzYzNiAKTCA0MTYuOTQ1NDU1IDM3OC44MDcyNzMgCkwgMzg5Ljg5MDkwOSAzNzguODA3MjczIApMIDM2Mi44MzYzNjQgNDA1LjE2MzYzNiAKTCAzODkuODkwOTA5IDQzMS41MiAKTCA0MTYuOTQ1NDU1IDQzMS41MiAKegoiIHN0eWxlPSJmaWxsOiM5ZjU4Y2Q7c3Ryb2tlOiM5ZjU4Y2Q7c3Ryb2tlLWxpbmVqb2luOm1pdGVyOyIvPgogICA8L2c+CiAgIDxnIGlkPSJwYXRjaF80MCI+CiAgICA8cGF0aCBjbGlwLXBhdGg9InVybCgjcDgyYmNiMzBkMDYpIiBkPSJNIDQ0NCAzNTIuNDUwOTA5IApMIDQxNi45NDU0NTUgMzI2LjA5NDU0NSAKTCAzODkuODkwOTA5IDMyNi4wOTQ1NDUgCkwgMzYyLjgzNjM2NCAzNTIuNDUwOTA5IApMIDM4OS44OTA5MDkgMzc4LjgwNzI3MyAKTCA0MTYuOTQ1NDU1IDM3OC44MDcyNzMgCnoKIiBzdHlsZT0iZmlsbDojOGRhZmEwO3N0cm9rZTojOGRhZmEwO3N0cm9rZS1saW5lam9pbjptaXRlcjsiLz4KICAgPC9nPgogICA8ZyBpZD0icGF0Y2hfNDEiPgogICAgPHBhdGggY2xpcC1wYXRoPSJ1cmwoI3A4MmJjYjMwZDA2KSIgZD0iTSA0NDQgMjk5LjczODE4MiAKTCA0MTYuOTQ1NDU1IDI3My4zODE4MTggCkwgMzg5Ljg5MDkwOSAyNzMuMzgxODE4IApMIDM2Mi44MzYzNjQgMjk5LjczODE4MiAKTCAzODkuODkwOTA5IDMyNi4wOTQ1NDUgCkwgNDE2Ljk0NTQ1NSAzMjYuMDk0NTQ1IAp6CiIgc3R5bGU9ImZpbGw6I2EyM2E4NjtzdHJva2U6I2EyM2E4NjtzdHJva2UtbGluZWpvaW46bWl0ZXI7Ii8+CiAgIDwvZz4KICAgPGcgaWQ9InBhdGNoXzQyIj4KICAgIDxwYXRoIGNsaXAtcGF0aD0idXJsKCNwODJiY2IzMGQwNikiIGQ9Ik0gNDQ0IDI0Ny4wMjU0NTUgCkwgNDE2Ljk0NTQ1NSAyMjAuNjY5MDkxIApMIDM4OS44OTA5MDkgMjIwLjY2OTA5MSAKTCAzNjIuODM2MzY0IDI0Ny4wMjU0NTUgCkwgMzg5Ljg5MDkwOSAyNzMuMzgxODE4IApMIDQxNi45NDU0NTUgMjczLjM4MTgxOCAKegoiIHN0eWxlPSJmaWxsOiNmMTgzM2M7c3Ryb2tlOiNmMTgzM2M7c3Ryb2tlLWxpbmVqb2luOm1pdGVyOyIvPgogICA8L2c+CiAgIDxnIGlkPSJwYXRjaF80MyI+CiAgICA8cGF0aCBjbGlwLXBhdGg9InVybCgjcDgyYmNiMzBkMDYpIiBkPSJNIDQ0NCAxOTQuMzEyNzI3IApMIDQxNi45NDU0NTUgMTY3Ljk1NjM2NCAKTCAzODkuODkwOTA5IDE2Ny45NTYzNjQgCkwgMzYyLjgzNjM2NCAxOTQuMzEyNzI3IApMIDM4OS44OTA5MDkgMjIwLjY2OTA5MSAKTCA0MTYuOTQ1NDU1IDIyMC42NjkwOTEgCnoKIiBzdHlsZT0iZmlsbDojNThjYzNmO3N0cm9rZTojNThjYzNmO3N0cm9rZS1saW5lam9pbjptaXRlcjsiLz4KICAgPC9nPgogICA8ZyBpZD0icGF0Y2hfNDQiPgogICAgPHBhdGggY2xpcC1wYXRoPSJ1cmwoI3A4MmJjYjMwZDA2KSIgZD0iTSA0NDQgMTQxLjYgCkwgNDE2Ljk0NTQ1NSAxMTUuMjQzNjM2IApMIDM4OS44OTA5MDkgMTE1LjI0MzYzNiAKTCAzNjIuODM2MzY0IDE0MS42IApMIDM4OS44OTA5MDkgMTY3Ljk1NjM2NCAKTCA0MTYuOTQ1NDU1IDE2Ny45NTYzNjQgCnoKIiBzdHlsZT0iZmlsbDojMzJhM2Q1O3N0cm9rZTojMzJhM2Q1O3N0cm9rZS1saW5lam9pbjptaXRlcjsiLz4KICAgPC9nPgogICA8ZyBpZD0icGF0Y2hfNDUiPgogICAgPHBhdGggY2xpcC1wYXRoPSJ1cmwoI3A4MmJjYjMwZDA2KSIgZD0iTSA0OTguMTA5MDkxIDQzMS41MiAKTCA0NzEuMDU0NTQ1IDQwNS4xNjM2MzYgCkwgNDQ0IDQwNS4xNjM2MzYgCkwgNDE2Ljk0NTQ1NSA0MzEuNTIgCkwgNDQ0IDQ1Ny44NzYzNjQgCkwgNDcxLjA1NDU0NSA0NTcuODc2MzY0IAp6CiIgc3R5bGU9ImZpbGw6Izg2NDI3OTtzdHJva2U6Izg2NDI3OTtzdHJva2UtbGluZWpvaW46bWl0ZXI7Ii8+CiAgIDwvZz4KICAgPGcgaWQ9InBhdGNoXzQ2Ij4KICAgIDxwYXRoIGNsaXAtcGF0aD0idXJsKCNwODJiY2IzMGQwNikiIGQ9Ik0gNDk4LjEwOTA5MSAzNzguODA3MjczIApMIDQ3MS4wNTQ1NDUgMzUyLjQ1MDkwOSAKTCA0NDQgMzUyLjQ1MDkwOSAKTCA0MTYuOTQ1NDU1IDM3OC44MDcyNzMgCkwgNDQ0IDQwNS4xNjM2MzYgCkwgNDcxLjA1NDU0NSA0MDUuMTYzNjM2IAp6CiIgc3R5bGU9ImZpbGw6IzRjZjg5ODtzdHJva2U6IzRjZjg5ODtzdHJva2UtbGluZWpvaW46bWl0ZXI7Ii8+CiAgIDwvZz4KICAgPGcgaWQ9InBhdGNoXzQ3Ij4KICAgIDxwYXRoIGNsaXAtcGF0aD0idXJsKCNwODJiY2IzMGQwNikiIGQ9Ik0gNDk4LjEwOTA5MSAzMjYuMDk0NTQ1IApMIDQ3MS4wNTQ1NDUgMjk5LjczODE4MiAKTCA0NDQgMjk5LjczODE4MiAKTCA0MTYuOTQ1NDU1IDMyNi4wOTQ1NDUgCkwgNDQ0IDM1Mi40NTA5MDkgCkwgNDcxLjA1NDU0NSAzNTIuNDUwOTA5IAp6CiIgc3R5bGU9ImZpbGw6I2RlMzc4ZTtzdHJva2U6I2RlMzc4ZTtzdHJva2UtbGluZWpvaW46bWl0ZXI7Ii8+CiAgIDwvZz4KICAgPGcgaWQ9InBhdGNoXzQ4Ij4KICAgIDxwYXRoIGNsaXAtcGF0aD0idXJsKCNwODJiY2IzMGQwNikiIGQ9Ik0gNDk4LjEwOTA5MSAyNzMuMzgxODE4IApMIDQ3MS4wNTQ1NDUgMjQ3LjAyNTQ1NSAKTCA0NDQgMjQ3LjAyNTQ1NSAKTCA0MTYuOTQ1NDU1IDI3My4zODE4MTggCkwgNDQ0IDI5OS43MzgxODIgCkwgNDcxLjA1NDU0NSAyOTkuNzM4MTgyIAp6CiIgc3R5bGU9ImZpbGw6I2Q1NThjNztzdHJva2U6I2Q1NThjNztzdHJva2UtbGluZWpvaW46bWl0ZXI7Ii8+CiAgIDwvZz4KICAgPGcgaWQ9InBhdGNoXzQ5Ij4KICAgIDxwYXRoIGNsaXAtcGF0aD0idXJsKCNwODJiY2IzMGQwNikiIGQ9Ik0gNDk4LjEwOTA5MSAyMjAuNjY5MDkxIApMIDQ3MS4wNTQ1NDUgMTk0LjMxMjcyNyAKTCA0NDQgMTk0LjMxMjcyNyAKTCA0MTYuOTQ1NDU1IDIyMC42NjkwOTEgCkwgNDQ0IDI0Ny4wMjU0NTUgCkwgNDcxLjA1NDU0NSAyNDcuMDI1NDU1IAp6CiIgc3R5bGU9ImZpbGw6I2Y5M2MwMjtzdHJva2U6I2Y5M2MwMjtzdHJva2UtbGluZWpvaW46bWl0ZXI7Ii8+CiAgIDwvZz4KICAgPGcgaWQ9InBhdGNoXzUwIj4KICAgIDxwYXRoIGNsaXAtcGF0aD0idXJsKCNwODJiY2IzMGQwNikiIGQ9Ik0gNDk4LjEwOTA5MSAxNjcuOTU2MzY0IApMIDQ3MS4wNTQ1NDUgMTQxLjYgCkwgNDQ0IDE0MS42IApMIDQxNi45NDU0NTUgMTY3Ljk1NjM2NCAKTCA0NDQgMTk0LjMxMjcyNyAKTCA0NzEuMDU0NTQ1IDE5NC4zMTI3MjcgCnoKIiBzdHlsZT0iZmlsbDojZDAxODEyO3N0cm9rZTojZDAxODEyO3N0cm9rZS1saW5lam9pbjptaXRlcjsiLz4KICAgPC9nPgogICA8ZyBpZD0icGF0Y2hfNTEiPgogICAgPHBhdGggY2xpcC1wYXRoPSJ1cmwoI3A4MmJjYjMwZDA2KSIgZD0iTSA0OTguMTA5MDkxIDExNS4yNDM2MzYgCkwgNDcxLjA1NDU0NSA4OC44ODcyNzMgCkwgNDQ0IDg4Ljg4NzI3MyAKTCA0MTYuOTQ1NDU1IDExNS4yNDM2MzYgCkwgNDQ0IDE0MS42IApMIDQ3MS4wNTQ1NDUgMTQxLjYgCnoKIiBzdHlsZT0iZmlsbDojMmM0NTg5O3N0cm9rZTojMmM0NTg5O3N0cm9rZS1saW5lam9pbjptaXRlcjsiLz4KICAgPC9nPgogICA8ZyBpZD0ibWF0cGxvdGxpYi5heGlzXzEiPgogICAgPGcgaWQ9Inh0aWNrXzEiPgogICAgIDxnIGlkPSJsaW5lMmRfMSI+CiAgICAgIDxkZWZzPgogICAgICAgPHBhdGggZD0iTSAwIDAgCkwgMCAzLjUgCiIgaWQ9Im1lOTdjMjVkYzFiIiBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjAuODsiLz4KICAgICAgPC9kZWZzPgogICAgICA8Zz4KICAgICAgIDx1c2Ugc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDowLjg7IiB4PSIxMDUuODE4MTgyIiB4bGluazpocmVmPSIjbWU5N2MyNWRjMWIiIHk9IjUwNCIvPgogICAgICA8L2c+CiAgICAgPC9nPgogICAgIDxnIGlkPSJ0ZXh0XzEiPgogICAgICA8IS0tIDAgLS0+CiAgICAgIDxkZWZzPgogICAgICAgPHBhdGggZD0iTSAzMC43NjU2MjUgNzEuNzUgCkMgMTUuNTkzNzUgNzEuNzUgNy42NDA2MjUgNTguNzE4NzUgNy42NDA2MjUgMzUuMzI4MTI1IApDIDcuNjQwNjI1IDExLjg0Mzc1IDE1LjU5Mzc1IC0xLjE3MTg3NSAzMC43NjU2MjUgLTEuMTcxODc1IApDIDQ1Ljk1MzEyNSAtMS4xNzE4NzUgNTMuODkwNjI1IDExLjg0Mzc1IDUzLjg5MDYyNSAzNS4zMjgxMjUgCkMgNTMuODkwNjI1IDU4LjcxODc1IDQ1Ljk1MzEyNSA3MS43NSAzMC43NjU2MjUgNzEuNzUgCnoKTSAzMC43NjU2MjUgNjQuODI4MTI1IApDIDM0LjgyODEyNSA2NC44MjgxMjUgMzcuODkwNjI1IDYzLjM5MDYyNSA0MC4xNTYyNSA2MC4yNSAKTCAxOC41NjI1IDE2Ljg3NSAKQyAxNy4zMjgxMjUgMjEuNDM3NSAxNi43NjU2MjUgMjcuNDg0Mzc1IDE2Ljc2NTYyNSAzNS4zMjgxMjUgCkMgMTYuNzY1NjI1IDU2LjI1IDIyLjEwOTM3NSA2NC44MjgxMjUgMzAuNzY1NjI1IDY0LjgyODEyNSAKegpNIDQ0LjgyODEyNSAzNS4zMjgxMjUgCkMgNDQuODI4MTI1IDE0LjQwNjI1IDM5LjU0Njg3NSA1Ljc5Njg3NSAzMC43NjU2MjUgNS43OTY4NzUgCkMgMjYuODI4MTI1IDUuNzk2ODc1IDIzLjc1IDcuMTcxODc1IDIxLjQ4NDM3NSAxMC4zMTI1IApMIDQyLjk2ODc1IDUzLjg0Mzc1IApDIDQ0LjIwMzEyNSA0OS4yODEyNSA0NC44MjgxMjUgNDMuMjM0Mzc1IDQ0LjgyODEyNSAzNS4zMjgxMjUgCnoKIiBpZD0iRmlyYUNvZGUtUmVndWxhci00OCIvPgogICAgICA8L2RlZnM+CiAgICAgIDxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDEwMS4yMDIxNjYgNTIyLjM2MjUpc2NhbGUoMC4xNSAtMC4xNSkiPgogICAgICAgPHVzZSB4bGluazpocmVmPSIjRmlyYUNvZGUtUmVndWxhci00OCIvPgogICAgICA8L2c+CiAgICAgPC9nPgogICAgPC9nPgogICAgPGcgaWQ9Inh0aWNrXzIiPgogICAgIDxnIGlkPSJsaW5lMmRfMiI+CiAgICAgIDxnPgogICAgICAgPHVzZSBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjAuODsiIHg9IjE1OS45MjcyNzMiIHhsaW5rOmhyZWY9IiNtZTk3YzI1ZGMxYiIgeT0iNTA0Ii8+CiAgICAgIDwvZz4KICAgICA8L2c+CiAgICAgPGcgaWQ9InRleHRfMiI+CiAgICAgIDwhLS0gMSAtLT4KICAgICAgPGRlZnM+CiAgICAgICA8cGF0aCBkPSJNIDUzLjA3ODEyNSA3LjAzMTI1IApMIDM4LjMxMjUgNy4wMzEyNSAKTCAzOC4zMTI1IDcwLjYwOTM3NSAKTCAzMC43NjU2MjUgNzAuNjA5Mzc1IApMIDkuNzUgNTcuNTkzNzUgCkwgMTMuNDg0Mzc1IDUxLjQzNzUgCkwgMjkuNjg3NSA2MS4yODEyNSAKTCAyOS42ODc1IDcuMDMxMjUgCkwgMTIuMzEyNSA3LjAzMTI1IApMIDEyLjMxMjUgMCAKTCA1My4wNzgxMjUgMCAKegoiIGlkPSJGaXJhQ29kZS1SZWd1bGFyLTQ5Ii8+CiAgICAgIDwvZGVmcz4KICAgICAgPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMTU1LjMxMTI1NyA1MjIuMzYyNSlzY2FsZSgwLjE1IC0wLjE1KSI+CiAgICAgICA8dXNlIHhsaW5rOmhyZWY9IiNGaXJhQ29kZS1SZWd1bGFyLTQ5Ii8+CiAgICAgIDwvZz4KICAgICA8L2c+CiAgICA8L2c+CiAgICA8ZyBpZD0ieHRpY2tfMyI+CiAgICAgPGcgaWQ9ImxpbmUyZF8zIj4KICAgICAgPGc+CiAgICAgICA8dXNlIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MC44OyIgeD0iMjE0LjAzNjM2NCIgeGxpbms6aHJlZj0iI21lOTdjMjVkYzFiIiB5PSI1MDQiLz4KICAgICAgPC9nPgogICAgIDwvZz4KICAgICA8ZyBpZD0idGV4dF8zIj4KICAgICAgPCEtLSAyIC0tPgogICAgICA8ZGVmcz4KICAgICAgIDxwYXRoIGQ9Ik0gMjcuNjQwNjI1IDcxLjc1IApDIDE4LjEwOTM3NSA3MS43NSAxMS42NDA2MjUgNjguNDY4NzUgNi4wNDY4NzUgNjEuNjQwNjI1IApMIDEyIDU3LjAzMTI1IApDIDE2LjQ2ODc1IDYyLjMxMjUgMjAuMjUgNjQuNTYyNSAyNy4yMzQzNzUgNjQuNTYyNSAKQyAzNS4xMjUgNjQuNTYyNSAzOS44NDM3NSA1OS42ODc1IDM5Ljg0Mzc1IDUxLjc1IApDIDM5Ljg0Mzc1IDQwLjI1IDM0LjEwOTM3NSAzMi41NjI1IDcuNDg0Mzc1IDcuMDMxMjUgCkwgNy40ODQzNzUgMCAKTCA0OS40ODQzNzUgMCAKTCA1MC41NjI1IDcuMzI4MTI1IApMIDE3LjI4MTI1IDcuMzI4MTI1IApDIDQwLjU2MjUgMjguNTYyNSA0OC45MjE4NzUgMzkuMDc4MTI1IDQ4LjkyMTg3NSA1Mi4wNDY4NzUgCkMgNDguOTIxODc1IDYzLjI4MTI1IDQwLjk2ODc1IDcxLjc1IDI3LjY0MDYyNSA3MS43NSAKegoiIGlkPSJGaXJhQ29kZS1SZWd1bGFyLTUwIi8+CiAgICAgIDwvZGVmcz4KICAgICAgPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMjA5LjQyMDM0OCA1MjIuMzYyNSlzY2FsZSgwLjE1IC0wLjE1KSI+CiAgICAgICA8dXNlIHhsaW5rOmhyZWY9IiNGaXJhQ29kZS1SZWd1bGFyLTUwIi8+CiAgICAgIDwvZz4KICAgICA8L2c+CiAgICA8L2c+CiAgICA8ZyBpZD0ieHRpY2tfNCI+CiAgICAgPGcgaWQ9ImxpbmUyZF80Ij4KICAgICAgPGc+CiAgICAgICA8dXNlIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MC44OyIgeD0iMjY4LjE0NTQ1NSIgeGxpbms6aHJlZj0iI21lOTdjMjVkYzFiIiB5PSI1MDQiLz4KICAgICAgPC9nPgogICAgIDwvZz4KICAgICA8ZyBpZD0idGV4dF80Ij4KICAgICAgPCEtLSAzIC0tPgogICAgICA8ZGVmcz4KICAgICAgIDxwYXRoIGQ9Ik0gMjcuNTQ2ODc1IDcxLjc1IApDIDIwLjM1OTM3NSA3MS43NSAxMy40ODQzNzUgNjkuMjgxMjUgNy40ODQzNzUgNjMuNjQwNjI1IApMIDEyLjI1IDU4LjM1OTM3NSAKQyAxNi45MjE4NzUgNjIuNzE4NzUgMjEuMDc4MTI1IDY0Ljg3NSAyNy4yMzQzNzUgNjQuODc1IApDIDM0LjYwOTM3NSA2NC44NzUgNDAuNTYyNSA2MC42NzE4NzUgNDAuNTYyNSA1Mi44NzUgCkMgNDAuNTYyNSA0NC40Njg3NSAzMy45NTMxMjUgNDAuNTYyNSAyNy4xMjUgNDAuNTYyNSAKTCAyMi45Njg3NSA0MC41NjI1IApMIDIxLjg5MDYyNSAzMy43NSAKTCAyNy44NDM3NSAzMy43NSAKQyAzNi4yMDMxMjUgMzMuNzUgNDIuNDY4NzUgMzAuNDY4NzUgNDIuNDY4NzUgMjAuMzU5Mzc1IApDIDQyLjQ2ODc1IDExLjQ4NDM3NSAzNi42MDkzNzUgNS45NTMxMjUgMjYuNzY1NjI1IDUuOTUzMTI1IApDIDIwLjk2ODc1IDUuOTUzMTI1IDE1LjA3ODEyNSA4LjI1IDExLjA3ODEyNSAxMi45Njg3NSAKTCA1LjI4MTI1IDguMjUgCkMgMTAuNjcxODc1IDEuNjg3NSAxOS4wNzgxMjUgLTEuMTcxODc1IDI2Ljk2ODc1IC0xLjE3MTg3NSAKQyA0MS41OTM3NSAtMS4xNzE4NzUgNTEuNDg0Mzc1IDguMTA5Mzc1IDUxLjQ4NDM3NSAyMC4zNTkzNzUgCkMgNTEuNDg0Mzc1IDMxLjIzNDM3NSA0My42ODc1IDM2Ljk2ODc1IDM1LjQzNzUgMzcuNjQwNjI1IApDIDQyLjkyMTg3NSAzOS4wMzEyNSA0OS4yMzQzNzUgNDUuNTMxMjUgNDkuMjM0Mzc1IDU0LjEwOTM3NSAKQyA0OS4yMzQzNzUgNjMuNjg3NSA0MC44NzUgNzEuNzUgMjcuNTQ2ODc1IDcxLjc1IAp6CiIgaWQ9IkZpcmFDb2RlLVJlZ3VsYXItNTEiLz4KICAgICAgPC9kZWZzPgogICAgICA8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgyNjMuNTI5NDM5IDUyMi4zNjI1KXNjYWxlKDAuMTUgLTAuMTUpIj4KICAgICAgIDx1c2UgeGxpbms6aHJlZj0iI0ZpcmFDb2RlLVJlZ3VsYXItNTEiLz4KICAgICAgPC9nPgogICAgIDwvZz4KICAgIDwvZz4KICAgIDxnIGlkPSJ4dGlja181Ij4KICAgICA8ZyBpZD0ibGluZTJkXzUiPgogICAgICA8Zz4KICAgICAgIDx1c2Ugc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDowLjg7IiB4PSIzMjIuMjU0NTQ1IiB4bGluazpocmVmPSIjbWU5N2MyNWRjMWIiIHk9IjUwNCIvPgogICAgICA8L2c+CiAgICAgPC9nPgogICAgIDxnIGlkPSJ0ZXh0XzUiPgogICAgICA8IS0tIDQgLS0+CiAgICAgIDxkZWZzPgogICAgICAgPHBhdGggZD0iTSA0NS4wNzgxMjUgNDQuMTA5Mzc1IApMIDM3Ljg5MDYyNSA0NC4xMDkzNzUgCkwgMzYuNzY1NjI1IDI0LjA0Njg3NSAKTCAxNi41MTU2MjUgMjQuMDQ2ODc1IApMIDM1LjI4MTI1IDY4LjcxODc1IApMIDI4LjEwOTM3NSA3MS43NSAKTCA3LjM5MDYyNSAyMy40Mzc1IApMIDcuMzkwNjI1IDE3LjE3MTg3NSAKTCAzNi43MTg3NSAxNy4xNzE4NzUgCkwgMzYuNzY1NjI1IDAgCkwgNDUuMDc4MTI1IDAgCkwgNDUuMDc4MTI1IDE3LjE3MTg3NSAKTCA1NC4yMDMxMjUgMTcuMTcxODc1IApMIDU0LjIwMzEyNSAyNC4wNDY4NzUgCkwgNDUuMDc4MTI1IDI0LjA0Njg3NSAKegoiIGlkPSJGaXJhQ29kZS1SZWd1bGFyLTUyIi8+CiAgICAgIDwvZGVmcz4KICAgICAgPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMzE3LjYzODUzIDUyMi4zNjI1KXNjYWxlKDAuMTUgLTAuMTUpIj4KICAgICAgIDx1c2UgeGxpbms6aHJlZj0iI0ZpcmFDb2RlLVJlZ3VsYXItNTIiLz4KICAgICAgPC9nPgogICAgIDwvZz4KICAgIDwvZz4KICAgIDxnIGlkPSJ4dGlja182Ij4KICAgICA8ZyBpZD0ibGluZTJkXzYiPgogICAgICA8Zz4KICAgICAgIDx1c2Ugc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDowLjg7IiB4PSIzNzYuMzYzNjM2IiB4bGluazpocmVmPSIjbWU5N2MyNWRjMWIiIHk9IjUwNCIvPgogICAgICA8L2c+CiAgICAgPC9nPgogICAgIDxnIGlkPSJ0ZXh0XzYiPgogICAgICA8IS0tIDUgLS0+CiAgICAgIDxkZWZzPgogICAgICAgPHBhdGggZD0iTSA0OS45NTMxMjUgNzAuNjA5Mzc1IApMIDEyLjU2MjUgNzAuNjA5Mzc1IApMIDEyLjU2MjUgMzUuMzI4MTI1IApMIDE5LjQ4NDM3NSAzNS4zMjgxMjUgCkMgMjMuNTkzNzUgMzYuODc1IDI2LjMxMjUgMzcuNjg3NSAzMC41MTU2MjUgMzcuNjg3NSAKQyAzNy41OTM3NSAzNy42ODc1IDQzLjIzNDM3NSAzNCA0My4yMzQzNzUgMjIuNjA5Mzc1IApDIDQzLjIzNDM3NSAxMS42NDA2MjUgMzcuNzUgNS45NTMxMjUgMjguNDY4NzUgNS45NTMxMjUgCkMgMjIuMzU5Mzc1IDUuOTUzMTI1IDE3LjQ4NDM3NSA4LjA0Njg3NSAxMy4yMzQzNzUgMTIuNDY4NzUgCkwgNy44OTA2MjUgNy4zMjgxMjUgCkMgMTMuMzkwNjI1IDIgMTkuODQzNzUgLTEuMTcxODc1IDI4LjM1OTM3NSAtMS4xNzE4NzUgCkMgNDIuOTIxODc1IC0xLjE3MTg3NSA1Mi4yNSA4LjI1IDUyLjI1IDIyLjM1OTM3NSAKQyA1Mi4yNSAzNi40Njg3NSA0NC41MTU2MjUgNDQuNTE1NjI1IDMyLjk2ODc1IDQ0LjUxNTYyNSAKQyAyOC43MTg3NSA0NC41MTU2MjUgMjUuMDc4MTI1IDQzLjc5Njg3NSAyMC43NjU2MjUgNDEuNDg0Mzc1IApMIDIwLjc2NTYyNSA2My43NSAKTCA0OC42NzE4NzUgNjMuNzUgCnoKIiBpZD0iRmlyYUNvZGUtUmVndWxhci01MyIvPgogICAgICA8L2RlZnM+CiAgICAgIDxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDM3MS43NDc2MjEgNTIyLjM2MjUpc2NhbGUoMC4xNSAtMC4xNSkiPgogICAgICAgPHVzZSB4bGluazpocmVmPSIjRmlyYUNvZGUtUmVndWxhci01MyIvPgogICAgICA8L2c+CiAgICAgPC9nPgogICAgPC9nPgogICAgPGcgaWQ9Inh0aWNrXzciPgogICAgIDxnIGlkPSJsaW5lMmRfNyI+CiAgICAgIDxnPgogICAgICAgPHVzZSBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjAuODsiIHg9IjQzMC40NzI3MjciIHhsaW5rOmhyZWY9IiNtZTk3YzI1ZGMxYiIgeT0iNTA0Ii8+CiAgICAgIDwvZz4KICAgICA8L2c+CiAgICAgPGcgaWQ9InRleHRfNyI+CiAgICAgIDwhLS0gNiAtLT4KICAgICAgPGRlZnM+CiAgICAgICA8cGF0aCBkPSJNIDM0LjQwNjI1IDcxLjc1IApDIDE3Ljg5MDYyNSA3MS43NSA4LjE1NjI1IDU2Ljc2NTYyNSA4LjE1NjI1IDMzLjM5MDYyNSAKQyA4LjE1NjI1IDEyLjM1OTM3NSAxNC40MDYyNSAtMS4xNzE4NzUgMzEuNTkzNzUgLTEuMTcxODc1IApDIDQzLjg0Mzc1IC0xLjE3MTg3NSA1My43OTY4NzUgOC4xNTYyNSA1My43OTY4NzUgMjMuNzUgCkMgNTMuNzk2ODc1IDM4LjgyODEyNSA0NC42NzE4NzUgNDYgMzMuNzk2ODc1IDQ2IApDIDI2Ljg3NSA0NiAyMS4yODEyNSA0My4xNzE4NzUgMTYuNzY1NjI1IDM2LjQ2ODc1IApDIDE3LjEyNSA1My42ODc1IDIzLjM5MDYyNSA2NC43NjU2MjUgMzQuMjUgNjQuNzY1NjI1IApDIDM4LjEwOTM3NSA2NC43NjU2MjUgNDEuNzk2ODc1IDYzLjc1IDQ0Ljk2ODc1IDYxLjc5Njg3NSAKTCA0OC4zNTkzNzUgNjcuNjQwNjI1IApDIDQ0LjM1OTM3NSA3MC4zMTI1IDM5Ljg0Mzc1IDcxLjc1IDM0LjQwNjI1IDcxLjc1IAp6Ck0gMzIuNDY4NzUgMzguOTIxODc1IApDIDM5Ljk1MzEyNSAzOC45MjE4NzUgNDQuOTY4NzUgMzUuMTI1IDQ0Ljk2ODc1IDIzLjUzMTI1IApDIDQ0Ljk2ODc1IDEyLjU2MjUgNDAuNDY4NzUgNS43OTY4NzUgMzEuNTQ2ODc1IDUuNzk2ODc1IApDIDIxLjU0Njg3NSA1Ljc5Njg3NSAxNy4yMzQzNzUgMTIuOTY4NzUgMTYuODc1IDI4LjkyMTg3NSAKQyAyMC4zNTkzNzUgMzQuODc1IDI1LjY4NzUgMzguOTIxODc1IDMyLjQ2ODc1IDM4LjkyMTg3NSAKegoiIGlkPSJGaXJhQ29kZS1SZWd1bGFyLTU0Ii8+CiAgICAgIDwvZGVmcz4KICAgICAgPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoNDI1Ljg1NjcxMiA1MjIuMzYyNSlzY2FsZSgwLjE1IC0wLjE1KSI+CiAgICAgICA8dXNlIHhsaW5rOmhyZWY9IiNGaXJhQ29kZS1SZWd1bGFyLTU0Ii8+CiAgICAgIDwvZz4KICAgICA8L2c+CiAgICA8L2c+CiAgICA8ZyBpZD0ieHRpY2tfOCI+CiAgICAgPGcgaWQ9ImxpbmUyZF84Ij4KICAgICAgPGc+CiAgICAgICA8dXNlIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MC44OyIgeD0iNDg0LjU4MTgxOCIgeGxpbms6aHJlZj0iI21lOTdjMjVkYzFiIiB5PSI1MDQiLz4KICAgICAgPC9nPgogICAgIDwvZz4KICAgICA8ZyBpZD0idGV4dF84Ij4KICAgICAgPCEtLSA3IC0tPgogICAgICA8ZGVmcz4KICAgICAgIDxwYXRoIGQ9Ik0gMjMuNjQwNjI1IC0wLjk2ODc1IApMIDUxLjc5Njg3NSA2NCAKTCA1MS43OTY4NzUgNzAuNjA5Mzc1IApMIDEwIDcwLjYwOTM3NSAKTCAxMCA2My40Mzc1IApMIDQzLjEyNSA2My40Mzc1IApMIDE1LjU5Mzc1IDEuNDg0Mzc1IAp6CiIgaWQ9IkZpcmFDb2RlLVJlZ3VsYXItNTUiLz4KICAgICAgPC9kZWZzPgogICAgICA8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSg0NzkuOTY1ODAzIDUyMi4zNjI1KXNjYWxlKDAuMTUgLTAuMTUpIj4KICAgICAgIDx1c2UgeGxpbms6aHJlZj0iI0ZpcmFDb2RlLVJlZ3VsYXItNTUiLz4KICAgICAgPC9nPgogICAgIDwvZz4KICAgIDwvZz4KICAgIDxnIGlkPSJ0ZXh0XzkiPgogICAgIDwhLS0gV29ybGQgeCAtLT4KICAgICA8ZGVmcz4KICAgICAgPHBhdGggZD0iTSA2MS4wNzgxMjUgNzAuNjA5Mzc1IApMIDUyLjgyODEyNSA3MC42MDkzNzUgCkwgNDQuMzU5Mzc1IDkuNzk2ODc1IApMIDM2LjMxMjUgNjIuNDA2MjUgCkwgMjUuMzkwNjI1IDYyLjQwNjI1IApMIDE2LjkyMTg3NSA5Ljc5Njg3NSAKTCA5LjM5MDYyNSA3MC42MDkzNzUgCkwgMC40Njg3NSA3MC42MDkzNzUgCkwgMTAuNDA2MjUgMCAKTCAyMi4zNTkzNzUgMCAKTCAzMC41MTU2MjUgNTMuMjgxMjUgCkwgMzguNjA5Mzc1IDAgCkwgNTAuMzEyNSAwIAp6CiIgaWQ9IkZpcmFDb2RlLVJlZ3VsYXItODciLz4KICAgICAgPHBhdGggZD0iTSAzMC44NzUgNTUuMTI1IApDIDE1LjY0MDYyNSA1NS4xMjUgNy41NDY4NzUgNDMuNTkzNzUgNy41NDY4NzUgMjYuOTIxODc1IApDIDcuNTQ2ODc1IDkuOTUzMTI1IDE1LjU0Njg3NSAtMS4xNzE4NzUgMzAuNzY1NjI1IC0xLjE3MTg3NSAKQyA0NS44OTA2MjUgLTEuMTcxODc1IDU0IDEwLjUxNTYyNSA1NCAyNy4wMzEyNSAKQyA1NCA0NC4xNTYyNSA0Ni4xMDkzNzUgNTUuMTI1IDMwLjg3NSA1NS4xMjUgCnoKTSAzMC44NzUgNDguMTA5Mzc1IApDIDQwLjA0Njg3NSA0OC4xMDkzNzUgNDQuNzY1NjI1IDQxLjM5MDYyNSA0NC43NjU2MjUgMjcuMDMxMjUgCkMgNDQuNzY1NjI1IDEyLjY3MTg3NSA0MC4wNDY4NzUgNS44OTA2MjUgMzAuNzY1NjI1IDUuODkwNjI1IApDIDIxLjQ4NDM3NSA1Ljg5MDYyNSAxNi43NjU2MjUgMTIuNjcxODc1IDE2Ljc2NTYyNSAyNi45MjE4NzUgCkMgMTYuNzY1NjI1IDQxLjM5MDYyNSAyMS41OTM3NSA0OC4xMDkzNzUgMzAuODc1IDQ4LjEwOTM3NSAKegoiIGlkPSJGaXJhQ29kZS1SZWd1bGFyLTExMSIvPgogICAgICA8cGF0aCBkPSJNIDEwLjgyODEyNSAwIApMIDM4LjgyODEyNSAwIApMIDM4LjgyODEyNSA2LjYwOTM3NSAKTCAyNy44NDM3NSA2LjYwOTM3NSAKTCAyNy44NDM3NSAyOS40ODQzNzUgCkMgMzEuNDM3NSA0MS4zOTA2MjUgMzcuMjgxMjUgNDcuMjM0Mzc1IDQ1LjY0MDYyNSA0Ny4yMzQzNzUgCkMgNDUuNzk2ODc1IDQ3LjIzNDM3NSA0NS45NTMxMjUgNDcuMjM0Mzc1IDQ2LjEwOTM3NSA0Ny4yMzQzNzUgCkwgNDYuMTA5Mzc1IDM1Ljc1IApMIDUzLjE4NzUgMzUuNzUgCkwgNTQuNDA2MjUgNTQgCkMgNTEuOTUzMTI1IDU0LjcxODc1IDQ5Ljc5Njg3NSA1NS4xNzE4NzUgNDYuNzY1NjI1IDU1LjE3MTg3NSAKQyAzNi45Njg3NSA1NS4xNzE4NzUgMzEuNTQ2ODc1IDUwLjEwOTM3NSAyNy4zOTA2MjUgNDEuMjM0Mzc1IApMIDI1Ljc5Njg3NSA1NCAKTCAxMC44MjgxMjUgNTQgCkwgMTAuODI4MTI1IDQ3LjM5MDYyNSAKTCAxOS4yMzQzNzUgNDcuMzkwNjI1IApMIDE5LjIzNDM3NSA2LjYwOTM3NSAKTCAxMC44MjgxMjUgNi42MDkzNzUgCnoKIiBpZD0iRmlyYUNvZGUtUmVndWxhci0xMTQiLz4KICAgICAgPHBhdGggZD0iTSAzMS4zMjgxMjUgNzUuNzUgCkwgNi4xNTYyNSA3NS43NSAKTCA2LjE1NjI1IDY4LjkyMTg3NSAKTCAyMi43MTg3NSA2OC45MjE4NzUgCkwgMjIuNzE4NzUgMTMuNzk2ODc1IApDIDIyLjcxODc1IDQuNDA2MjUgMjkuMjM0Mzc1IC0xLjE3MTg3NSAzOC44MjgxMjUgLTEuMTcxODc1IApDIDQ0LjI1IC0xLjE3MTg3NSA0OC43MTg3NSAwLjE1NjI1IDUxLjY0MDYyNSAxLjU5Mzc1IApMIDQ5LjMyODEyNSA3Ljg5MDYyNSAKQyA0Ni40MDYyNSA2LjcxODc1IDQzLjQ4NDM3NSA2IDQwLjI1IDYgCkMgMzUuMDMxMjUgNiAzMS4zMjgxMjUgOCAzMS4zMjgxMjUgMTMuMzI4MTI1IAp6CiIgaWQ9IkZpcmFDb2RlLVJlZ3VsYXItMTA4Ii8+CiAgICAgIDxwYXRoIGQ9Ik0gNDIuNjA5Mzc1IDc2LjgyODEyNSAKTCA0Mi42MDkzNzUgNDguNzY1NjI1IApDIDM5LjAzMTI1IDUyLjk2ODc1IDM0LjM1OTM3NSA1NS4xMjUgMjguMTU2MjUgNTUuMTI1IApDIDE0LjgyODEyNSA1NS4xMjUgNi45Njg3NSA0My4xNzE4NzUgNi45Njg3NSAyNi45MjE4NzUgCkMgNi45Njg3NSAxMC4yMDMxMjUgMTMuNDM3NSAtMS4xNzE4NzUgMjcuNTQ2ODc1IC0xLjE3MTg3NSAKQyAzMy40ODQzNzUgLTEuMTcxODc1IDM4LjgyODEyNSAxLjM5MDYyNSA0Mi44NzUgNy4xMjUgCkwgNDMuNjg3NSAwIApMIDUxLjIzNDM3NSAwIApMIDUxLjIzNDM3NSA3NS43NSAKegpNIDMwLjQwNjI1IDQ4LjIwMzEyNSAKQyAzNS4zOTA2MjUgNDguMjAzMTI1IDM5LjY4NzUgNDUuNjQwNjI1IDQyLjYwOTM3NSA0MS4yODEyNSAKTCA0Mi42MDkzNzUgMTQuMzEyNSAKQyAzOS42ODc1IDkuODkwNjI1IDM1LjQzNzUgNS43OTY4NzUgMjkuMzI4MTI1IDUuNzk2ODc1IApDIDIwLjg3NSA1Ljc5Njg3NSAxNi4zNTkzNzUgMTIuOTIxODc1IDE2LjM1OTM3NSAyNi45MjE4NzUgCkMgMTYuMzU5Mzc1IDQxLjE3MTg3NSAyMS4zOTA2MjUgNDguMjAzMTI1IDMwLjQwNjI1IDQ4LjIwMzEyNSAKegoiIGlkPSJGaXJhQ29kZS1SZWd1bGFyLTEwMCIvPgogICAgICA8cGF0aCBpZD0iRmlyYUNvZGUtUmVndWxhci0zMiIvPgogICAgICA8cGF0aCBkPSJNIDE1LjU0Njg3NSAwIApMIDMwLjUxNTYyNSAyMy4xNzE4NzUgCkwgNDUuMjgxMjUgMCAKTCA1NS44NDM3NSAwIApMIDM1Ljk1MzEyNSAyOC44NzUgCkwgNTMuMzkwNjI1IDU0IApMIDQzLjU0Njg3NSA1NCAKTCAzMC44NzUgMzMuODkwNjI1IApMIDE4LjM1OTM3NSA1NCAKTCA4LjE1NjI1IDU0IApMIDI1LjY0MDYyNSAyOC41MTU2MjUgCkwgNS42ODc1IDAgCnoKIiBpZD0iRmlyYUNvZGUtUmVndWxhci0xMjAiLz4KICAgICA8L2RlZnM+CiAgICAgPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMjYyLjg4Nzg5MSA1NDAuOTg3NSlzY2FsZSgwLjE1IC0wLjE1KSI+CiAgICAgIDx1c2UgeGxpbms6aHJlZj0iI0ZpcmFDb2RlLVJlZ3VsYXItODciLz4KICAgICAgPHVzZSB4PSI2MS41Mzg0NTIiIHhsaW5rOmhyZWY9IiNGaXJhQ29kZS1SZWd1bGFyLTExMSIvPgogICAgICA8dXNlIHg9IjEyMy4wNzY5MDQiIHhsaW5rOmhyZWY9IiNGaXJhQ29kZS1SZWd1bGFyLTExNCIvPgogICAgICA8dXNlIHg9IjE4NC42MTUzNTYiIHhsaW5rOmhyZWY9IiNGaXJhQ29kZS1SZWd1bGFyLTEwOCIvPgogICAgICA8dXNlIHg9IjI0Ni4xNTM4MDkiIHhsaW5rOmhyZWY9IiNGaXJhQ29kZS1SZWd1bGFyLTEwMCIvPgogICAgICA8dXNlIHg9IjMwNy42OTIyNjEiIHhsaW5rOmhyZWY9IiNGaXJhQ29kZS1SZWd1bGFyLTMyIi8+CiAgICAgIDx1c2UgeD0iMzY5LjIzMDcxMyIgeGxpbms6aHJlZj0iI0ZpcmFDb2RlLVJlZ3VsYXItMTIwIi8+CiAgICAgPC9nPgogICAgPC9nPgogICA8L2c+CiAgIDxnIGlkPSJtYXRwbG90bGliLmF4aXNfMiI+CiAgICA8ZyBpZD0ieXRpY2tfMSI+CiAgICAgPGcgaWQ9ImxpbmUyZF85Ij4KICAgICAgPGRlZnM+CiAgICAgICA8cGF0aCBkPSJNIDAgMCAKTCAtMy41IDAgCiIgaWQ9Im05ZjYyZDE1OWYxIiBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjAuODsiLz4KICAgICAgPC9kZWZzPgogICAgICA8Zz4KICAgICAgIDx1c2Ugc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDowLjg7IiB4PSI3MiIgeGxpbms6aHJlZj0iI205ZjYyZDE1OWYxIiB5PSI0NTcuODc2MzY0Ii8+CiAgICAgIDwvZz4KICAgICA8L2c+CiAgICAgPGcgaWQ9InRleHRfMTAiPgogICAgICA8IS0tIDAgLS0+CiAgICAgIDxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDU1Ljc2Nzk2OSA0NjMuNTU3NjE0KXNjYWxlKDAuMTUgLTAuMTUpIj4KICAgICAgIDx1c2UgeGxpbms6aHJlZj0iI0ZpcmFDb2RlLVJlZ3VsYXItNDgiLz4KICAgICAgPC9nPgogICAgIDwvZz4KICAgIDwvZz4KICAgIDxnIGlkPSJ5dGlja18yIj4KICAgICA8ZyBpZD0ibGluZTJkXzEwIj4KICAgICAgPGc+CiAgICAgICA8dXNlIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MC44OyIgeD0iNzIiIHhsaW5rOmhyZWY9IiNtOWY2MmQxNTlmMSIgeT0iNDA1LjE2MzYzNiIvPgogICAgICA8L2c+CiAgICAgPC9nPgogICAgIDxnIGlkPSJ0ZXh0XzExIj4KICAgICAgPCEtLSAyIC0tPgogICAgICA8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSg1NS43Njc5NjkgNDEwLjg0NDg4NilzY2FsZSgwLjE1IC0wLjE1KSI+CiAgICAgICA8dXNlIHhsaW5rOmhyZWY9IiNGaXJhQ29kZS1SZWd1bGFyLTUwIi8+CiAgICAgIDwvZz4KICAgICA8L2c+CiAgICA8L2c+CiAgICA8ZyBpZD0ieXRpY2tfMyI+CiAgICAgPGcgaWQ9ImxpbmUyZF8xMSI+CiAgICAgIDxnPgogICAgICAgPHVzZSBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjAuODsiIHg9IjcyIiB4bGluazpocmVmPSIjbTlmNjJkMTU5ZjEiIHk9IjM1Mi40NTA5MDkiLz4KICAgICAgPC9nPgogICAgIDwvZz4KICAgICA8ZyBpZD0idGV4dF8xMiI+CiAgICAgIDwhLS0gNCAtLT4KICAgICAgPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoNTUuNzY3OTY5IDM1OC4xMzIxNTkpc2NhbGUoMC4xNSAtMC4xNSkiPgogICAgICAgPHVzZSB4bGluazpocmVmPSIjRmlyYUNvZGUtUmVndWxhci01MiIvPgogICAgICA8L2c+CiAgICAgPC9nPgogICAgPC9nPgogICAgPGcgaWQ9Inl0aWNrXzQiPgogICAgIDxnIGlkPSJsaW5lMmRfMTIiPgogICAgICA8Zz4KICAgICAgIDx1c2Ugc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDowLjg7IiB4PSI3MiIgeGxpbms6aHJlZj0iI205ZjYyZDE1OWYxIiB5PSIyOTkuNzM4MTgyIi8+CiAgICAgIDwvZz4KICAgICA8L2c+CiAgICAgPGcgaWQ9InRleHRfMTMiPgogICAgICA8IS0tIDYgLS0+CiAgICAgIDxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDU1Ljc2Nzk2OSAzMDUuNDE5NDMyKXNjYWxlKDAuMTUgLTAuMTUpIj4KICAgICAgIDx1c2UgeGxpbms6aHJlZj0iI0ZpcmFDb2RlLVJlZ3VsYXItNTQiLz4KICAgICAgPC9nPgogICAgIDwvZz4KICAgIDwvZz4KICAgIDxnIGlkPSJ5dGlja181Ij4KICAgICA8ZyBpZD0ibGluZTJkXzEzIj4KICAgICAgPGc+CiAgICAgICA8dXNlIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MC44OyIgeD0iNzIiIHhsaW5rOmhyZWY9IiNtOWY2MmQxNTlmMSIgeT0iMjQ3LjAyNTQ1NSIvPgogICAgICA8L2c+CiAgICAgPC9nPgogICAgIDxnIGlkPSJ0ZXh0XzE0Ij4KICAgICAgPCEtLSA4IC0tPgogICAgICA8ZGVmcz4KICAgICAgIDxwYXRoIGQ9Ik0gNTEuOTUzMTI1IDUzLjc5Njg3NSAKQyA1MS45NTMxMjUgNjYuMzEyNSA0MS4wMzEyNSA3MS43NSAzMC43NjU2MjUgNzEuNzUgCkMgMjEuNDg0Mzc1IDcxLjc1IDkuNTkzNzUgNjYuMjUgOS41OTM3NSA1My4zMjgxMjUgCkMgOS41OTM3NSA0NS40Mzc1IDEzLjM5MDYyNSA0MC43NjU2MjUgMjAuODc1IDM3LjE3MTg3NSAKQyAxMi4zMTI1IDMzLjIzNDM3NSA2LjcxODc1IDI3LjQzNzUgNi43MTg3NSAxOC43NjU2MjUgCkMgNi43MTg3NSA3LjUzMTI1IDE1LjQzNzUgLTEuMTcxODc1IDMwLjU2MjUgLTEuMTcxODc1IApDIDQ1LjQ4NDM3NSAtMS4xNzE4NzUgNTQuODI4MTI1IDcuMzkwNjI1IDU0LjgyODEyNSAxOC45MjE4NzUgCkMgNTQuODI4MTI1IDI3LjY0MDYyNSA0OC44NzUgMzQuMTA5Mzc1IDM5LjY4NzUgMzcuODkwNjI1IApDIDQ3LjU0Njg3NSA0Mi4yMDMxMjUgNTEuOTUzMTI1IDQ2LjkyMTg3NSA1MS45NTMxMjUgNTMuNzk2ODc1IAp6Ck0gMTguMTA5Mzc1IDUzLjIzNDM3NSAKQyAxOC4xMDkzNzUgNjAuNzE4NzUgMjIuNzY1NjI1IDY1LjA3ODEyNSAzMC43NjU2MjUgNjUuMDc4MTI1IApDIDM4LjgyODEyNSA2NS4wNzgxMjUgNDMuNDM3NSA2MC41NjI1IDQzLjQzNzUgNTMuNDg0Mzc1IApDIDQzLjQzNzUgNDcuMDMxMjUgNDAuMTU2MjUgNDMuNzUgMzMuNTkzNzUgNDAuMDQ2ODc1IApDIDI0IDQzLjEyNSAxOC4xMDkzNzUgNDUuMDc4MTI1IDE4LjEwOTM3NSA1My4yMzQzNzUgCnoKTSA0NS43NSAxOC44MjgxMjUgCkMgNDUuNzUgMTEuMzkwNjI1IDQwLjM1OTM3NSA1Ljc5Njg3NSAzMC41MTU2MjUgNS43OTY4NzUgCkMgMjAuNzY1NjI1IDUuNzk2ODc1IDE1Ljc5Njg3NSAxMC43MTg3NSAxNS43OTY4NzUgMTguNzE4NzUgCkMgMTUuNzk2ODc1IDI3LjY0MDYyNSAyMC45Njg3NSAzMi4wNDY4NzUgMjYuODI4MTI1IDM0LjcxODc1IApDIDM3Ljk1MzEyNSAzMC44NzUgNDUuNzUgMjguMzEyNSA0NS43NSAxOC44MjgxMjUgCnoKIiBpZD0iRmlyYUNvZGUtUmVndWxhci01NiIvPgogICAgICA8L2RlZnM+CiAgICAgIDxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDU1Ljc2Nzk2OSAyNTIuNzA2NzA1KXNjYWxlKDAuMTUgLTAuMTUpIj4KICAgICAgIDx1c2UgeGxpbms6aHJlZj0iI0ZpcmFDb2RlLVJlZ3VsYXItNTYiLz4KICAgICAgPC9nPgogICAgIDwvZz4KICAgIDwvZz4KICAgIDxnIGlkPSJ5dGlja182Ij4KICAgICA8ZyBpZD0ibGluZTJkXzE0Ij4KICAgICAgPGc+CiAgICAgICA8dXNlIHN0eWxlPSJzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MC44OyIgeD0iNzIiIHhsaW5rOmhyZWY9IiNtOWY2MmQxNTlmMSIgeT0iMTk0LjMxMjcyNyIvPgogICAgICA8L2c+CiAgICAgPC9nPgogICAgIDxnIGlkPSJ0ZXh0XzE1Ij4KICAgICAgPCEtLSAxMCAtLT4KICAgICAgPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoNDYuNTM1OTM4IDE5OS45OTM5Nzcpc2NhbGUoMC4xNSAtMC4xNSkiPgogICAgICAgPHVzZSB4bGluazpocmVmPSIjRmlyYUNvZGUtUmVndWxhci00OSIvPgogICAgICAgPHVzZSB4PSI2MS41Mzg0NTIiIHhsaW5rOmhyZWY9IiNGaXJhQ29kZS1SZWd1bGFyLTQ4Ii8+CiAgICAgIDwvZz4KICAgICA8L2c+CiAgICA8L2c+CiAgICA8ZyBpZD0ieXRpY2tfNyI+CiAgICAgPGcgaWQ9ImxpbmUyZF8xNSI+CiAgICAgIDxnPgogICAgICAgPHVzZSBzdHlsZT0ic3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjAuODsiIHg9IjcyIiB4bGluazpocmVmPSIjbTlmNjJkMTU5ZjEiIHk9IjE0MS42Ii8+CiAgICAgIDwvZz4KICAgICA8L2c+CiAgICAgPGcgaWQ9InRleHRfMTYiPgogICAgICA8IS0tIDEyIC0tPgogICAgICA8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSg0Ni41MzU5MzggMTQ3LjI4MTI1KXNjYWxlKDAuMTUgLTAuMTUpIj4KICAgICAgIDx1c2UgeGxpbms6aHJlZj0iI0ZpcmFDb2RlLVJlZ3VsYXItNDkiLz4KICAgICAgIDx1c2UgeD0iNjEuNTM4NDUyIiB4bGluazpocmVmPSIjRmlyYUNvZGUtUmVndWxhci01MCIvPgogICAgICA8L2c+CiAgICAgPC9nPgogICAgPC9nPgogICAgPGcgaWQ9Inl0aWNrXzgiPgogICAgIDxnIGlkPSJsaW5lMmRfMTYiPgogICAgICA8Zz4KICAgICAgIDx1c2Ugc3R5bGU9InN0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDowLjg7IiB4PSI3MiIgeGxpbms6aHJlZj0iI205ZjYyZDE1OWYxIiB5PSI4OC44ODcyNzMiLz4KICAgICAgPC9nPgogICAgIDwvZz4KICAgICA8ZyBpZD0idGV4dF8xNyI+CiAgICAgIDwhLS0gMTQgLS0+CiAgICAgIDxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDQ2LjUzNTkzOCA5NC41Njg1MjMpc2NhbGUoMC4xNSAtMC4xNSkiPgogICAgICAgPHVzZSB4bGluazpocmVmPSIjRmlyYUNvZGUtUmVndWxhci00OSIvPgogICAgICAgPHVzZSB4PSI2MS41Mzg0NTIiIHhsaW5rOmhyZWY9IiNGaXJhQ29kZS1SZWd1bGFyLTUyIi8+CiAgICAgIDwvZz4KICAgICA8L2c+CiAgICA8L2c+CiAgICA8ZyBpZD0idGV4dF8xOCI+CiAgICAgPCEtLSBXb3JsZCB5IC0tPgogICAgIDxkZWZzPgogICAgICA8cGF0aCBkPSJNIDU1LjIzNDM3NSA1NCAKTCA0Ni4zMTI1IDU0IApMIDMxLjAzMTI1IDYuNTYyNSAKTCAxNS41NDY4NzUgNTQgCkwgNi4zMTI1IDU0IApMIDI1LjE4NzUgMCAKTCAyOC4wNDY4NzUgMCAKQyAyNS4xODc1IC04LjM1OTM3NSAyMiAtMTIuOTIxODc1IDEwLjgyODEyNSAtMTQuODI4MTI1IApMIDEyLjE1NjI1IC0yMS42ODc1IApDIDI2LjQ2ODc1IC0yMC4yNSAzMi40Njg3NSAtMTEuMzI4MTI1IDM2LjI1IC0wLjM1OTM3NSAKegoiIGlkPSJGaXJhQ29kZS1SZWd1bGFyLTEyMSIvPgogICAgIDwvZGVmcz4KICAgICA8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgzOS4yNzM0MzggMzE4Ljg3MjEwOSlyb3RhdGUoLTkwKXNjYWxlKDAuMTUgLTAuMTUpIj4KICAgICAgPHVzZSB4bGluazpocmVmPSIjRmlyYUNvZGUtUmVndWxhci04NyIvPgogICAgICA8dXNlIHg9IjYxLjUzODQ1MiIgeGxpbms6aHJlZj0iI0ZpcmFDb2RlLVJlZ3VsYXItMTExIi8+CiAgICAgIDx1c2UgeD0iMTIzLjA3NjkwNCIgeGxpbms6aHJlZj0iI0ZpcmFDb2RlLVJlZ3VsYXItMTE0Ii8+CiAgICAgIDx1c2UgeD0iMTg0LjYxNTM1NiIgeGxpbms6aHJlZj0iI0ZpcmFDb2RlLVJlZ3VsYXItMTA4Ii8+CiAgICAgIDx1c2UgeD0iMjQ2LjE1MzgwOSIgeGxpbms6aHJlZj0iI0ZpcmFDb2RlLVJlZ3VsYXItMTAwIi8+CiAgICAgIDx1c2UgeD0iMzA3LjY5MjI2MSIgeGxpbms6aHJlZj0iI0ZpcmFDb2RlLVJlZ3VsYXItMzIiLz4KICAgICAgPHVzZSB4PSIzNjkuMjMwNzEzIiB4bGluazpocmVmPSIjRmlyYUNvZGUtUmVndWxhci0xMjEiLz4KICAgICA8L2c+CiAgICA8L2c+CiAgIDwvZz4KICAgPGcgaWQ9InBhdGNoXzUyIj4KICAgIDxwYXRoIGQ9Ik0gNzIgNTA0IApMIDcyIDY5LjEyIAoiIHN0eWxlPSJmaWxsOm5vbmU7c3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLWxpbmVjYXA6c3F1YXJlO3N0cm9rZS1saW5lam9pbjptaXRlcjtzdHJva2Utd2lkdGg6MC44OyIvPgogICA8L2c+CiAgIDxnIGlkPSJwYXRjaF81MyI+CiAgICA8cGF0aCBkPSJNIDUxOC40IDUwNCAKTCA1MTguNCA2OS4xMiAKIiBzdHlsZT0iZmlsbDpub25lO3N0cm9rZTojMDAwMDAwO3N0cm9rZS1saW5lY2FwOnNxdWFyZTtzdHJva2UtbGluZWpvaW46bWl0ZXI7c3Ryb2tlLXdpZHRoOjAuODsiLz4KICAgPC9nPgogICA8ZyBpZD0icGF0Y2hfNTQiPgogICAgPHBhdGggZD0iTSA3MiA1MDQgCkwgNTE4LjQgNTA0IAoiIHN0eWxlPSJmaWxsOm5vbmU7c3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLWxpbmVjYXA6c3F1YXJlO3N0cm9rZS1saW5lam9pbjptaXRlcjtzdHJva2Utd2lkdGg6MC44OyIvPgogICA8L2c+CiAgIDxnIGlkPSJwYXRjaF81NSI+CiAgICA8cGF0aCBkPSJNIDcyIDY5LjEyIApMIDUxOC40IDY5LjEyIAoiIHN0eWxlPSJmaWxsOm5vbmU7c3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLWxpbmVjYXA6c3F1YXJlO3N0cm9rZS1saW5lam9pbjptaXRlcjtzdHJva2Utd2lkdGg6MC44OyIvPgogICA8L2c+CiAgIDxnIGlkPSJ0ZXh0XzE5Ij4KICAgIDwhLS0gMCwwIC0tPgogICAgPGRlZnM+CiAgICAgPHBhdGggZD0iTSAzMC43NjU2MjUgMTYuODc1IApDIDI2LjEwOTM3NSAxNi44NzUgMjIuNTYyNSAxMy4xNzE4NzUgMjIuNTYyNSA4LjY3MTg3NSAKQyAyMi41NjI1IDUuODkwNjI1IDIzLjg0Mzc1IDMuMzI4MTI1IDI1Ljg5MDYyNSAxLjg0Mzc1IApMIDIwLjk2ODc1IC0xOC40MDYyNSAKTCAyOC43NjU2MjUgLTE4LjQwNjI1IApMIDM3LjA3ODEyNSAwLjYwOTM3NSAKQyAzOC41NjI1IDMuODQzNzUgMzkuMDc4MTI1IDYuMjAzMTI1IDM5LjA3ODEyNSA4LjY3MTg3NSAKQyAzOS4wNzgxMjUgMTMuMTcxODc1IDM1LjU0Njg3NSAxNi44NzUgMzAuNzY1NjI1IDE2Ljg3NSAKegoiIGlkPSJGaXJhQ29kZS1SZWd1bGFyLTQ0Ii8+CiAgICA8L2RlZnM+CiAgICA8ZyBzdHlsZT0iZmlsbDojZTVmZjgwOyIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMTE5LjAyNDY4IDQzNS41NylzY2FsZSgwLjE1IC0wLjE1KSI+CiAgICAgPHVzZSB4bGluazpocmVmPSIjRmlyYUNvZGUtUmVndWxhci00OCIvPgogICAgIDx1c2UgeD0iNjEuNTM4NDUyIiB4bGluazpocmVmPSIjRmlyYUNvZGUtUmVndWxhci00NCIvPgogICAgIDx1c2UgeD0iMTIzLjA3NjkwNCIgeGxpbms6aHJlZj0iI0ZpcmFDb2RlLVJlZ3VsYXItNDgiLz4KICAgIDwvZz4KICAgPC9nPgogICA8ZyBpZD0idGV4dF8yMCI+CiAgICA8IS0tIDAsMSAtLT4KICAgIDxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDExOS4wMjQ2OCAzODIuODU3MjczKXNjYWxlKDAuMTUgLTAuMTUpIj4KICAgICA8dXNlIHhsaW5rOmhyZWY9IiNGaXJhQ29kZS1SZWd1bGFyLTQ4Ii8+CiAgICAgPHVzZSB4PSI2MS41Mzg0NTIiIHhsaW5rOmhyZWY9IiNGaXJhQ29kZS1SZWd1bGFyLTQ0Ii8+CiAgICAgPHVzZSB4PSIxMjMuMDc2OTA0IiB4bGluazpocmVmPSIjRmlyYUNvZGUtUmVndWxhci00OSIvPgogICAgPC9nPgogICA8L2c+CiAgIDxnIGlkPSJ0ZXh0XzIxIj4KICAgIDwhLS0gMCwyIC0tPgogICAgPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMTE5LjAyNDY4IDMzMC4xNDQ1NDUpc2NhbGUoMC4xNSAtMC4xNSkiPgogICAgIDx1c2UgeGxpbms6aHJlZj0iI0ZpcmFDb2RlLVJlZ3VsYXItNDgiLz4KICAgICA8dXNlIHg9IjYxLjUzODQ1MiIgeGxpbms6aHJlZj0iI0ZpcmFDb2RlLVJlZ3VsYXItNDQiLz4KICAgICA8dXNlIHg9IjEyMy4wNzY5MDQiIHhsaW5rOmhyZWY9IiNGaXJhQ29kZS1SZWd1bGFyLTUwIi8+CiAgICA8L2c+CiAgIDwvZz4KICAgPGcgaWQ9InRleHRfMjIiPgogICAgPCEtLSAwLDMgLS0+CiAgICA8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxMTkuMDI0NjggMjc3LjQzMTgxOClzY2FsZSgwLjE1IC0wLjE1KSI+CiAgICAgPHVzZSB4bGluazpocmVmPSIjRmlyYUNvZGUtUmVndWxhci00OCIvPgogICAgIDx1c2UgeD0iNjEuNTM4NDUyIiB4bGluazpocmVmPSIjRmlyYUNvZGUtUmVndWxhci00NCIvPgogICAgIDx1c2UgeD0iMTIzLjA3NjkwNCIgeGxpbms6aHJlZj0iI0ZpcmFDb2RlLVJlZ3VsYXItNTEiLz4KICAgIDwvZz4KICAgPC9nPgogICA8ZyBpZD0idGV4dF8yMyI+CiAgICA8IS0tIDAsNCAtLT4KICAgIDxnIHN0eWxlPSJmaWxsOiNlNWZmODA7IiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxMTkuMDI0NjggMjI0LjcxOTA5MSlzY2FsZSgwLjE1IC0wLjE1KSI+CiAgICAgPHVzZSB4bGluazpocmVmPSIjRmlyYUNvZGUtUmVndWxhci00OCIvPgogICAgIDx1c2UgeD0iNjEuNTM4NDUyIiB4bGluazpocmVmPSIjRmlyYUNvZGUtUmVndWxhci00NCIvPgogICAgIDx1c2UgeD0iMTIzLjA3NjkwNCIgeGxpbms6aHJlZj0iI0ZpcmFDb2RlLVJlZ3VsYXItNTIiLz4KICAgIDwvZz4KICAgPC9nPgogICA8ZyBpZD0idGV4dF8yNCI+CiAgICA8IS0tIDAsNSAtLT4KICAgIDxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDExOS4wMjQ2OCAxNzIuMDA2MzY0KXNjYWxlKDAuMTUgLTAuMTUpIj4KICAgICA8dXNlIHhsaW5rOmhyZWY9IiNGaXJhQ29kZS1SZWd1bGFyLTQ4Ii8+CiAgICAgPHVzZSB4PSI2MS41Mzg0NTIiIHhsaW5rOmhyZWY9IiNGaXJhQ29kZS1SZWd1bGFyLTQ0Ii8+CiAgICAgPHVzZSB4PSIxMjMuMDc2OTA0IiB4bGluazpocmVmPSIjRmlyYUNvZGUtUmVndWxhci01MyIvPgogICAgPC9nPgogICA8L2c+CiAgIDxnIGlkPSJ0ZXh0XzI1Ij4KICAgIDwhLS0gMCw2IC0tPgogICAgPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMTE5LjAyNDY4IDExOS4yOTM2MzYpc2NhbGUoMC4xNSAtMC4xNSkiPgogICAgIDx1c2UgeGxpbms6aHJlZj0iI0ZpcmFDb2RlLVJlZ3VsYXItNDgiLz4KICAgICA8dXNlIHg9IjYxLjUzODQ1MiIgeGxpbms6aHJlZj0iI0ZpcmFDb2RlLVJlZ3VsYXItNDQiLz4KICAgICA8dXNlIHg9IjEyMy4wNzY5MDQiIHhsaW5rOmhyZWY9IiNGaXJhQ29kZS1SZWd1bGFyLTU0Ii8+CiAgICA8L2c+CiAgIDwvZz4KICAgPGcgaWQ9InRleHRfMjYiPgogICAgPCEtLSAxLDAgLS0+CiAgICA8ZyBzdHlsZT0iZmlsbDojZTVmZjgwOyIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMTczLjEzMzc3MSA0NjEuOTI2MzY0KXNjYWxlKDAuMTUgLTAuMTUpIj4KICAgICA8dXNlIHhsaW5rOmhyZWY9IiNGaXJhQ29kZS1SZWd1bGFyLTQ5Ii8+CiAgICAgPHVzZSB4PSI2MS41Mzg0NTIiIHhsaW5rOmhyZWY9IiNGaXJhQ29kZS1SZWd1bGFyLTQ0Ii8+CiAgICAgPHVzZSB4PSIxMjMuMDc2OTA0IiB4bGluazpocmVmPSIjRmlyYUNvZGUtUmVndWxhci00OCIvPgogICAgPC9nPgogICA8L2c+CiAgIDxnIGlkPSJ0ZXh0XzI3Ij4KICAgIDwhLS0gMSwxIC0tPgogICAgPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMTczLjEzMzc3MSA0MDkuMjEzNjM2KXNjYWxlKDAuMTUgLTAuMTUpIj4KICAgICA8dXNlIHhsaW5rOmhyZWY9IiNGaXJhQ29kZS1SZWd1bGFyLTQ5Ii8+CiAgICAgPHVzZSB4PSI2MS41Mzg0NTIiIHhsaW5rOmhyZWY9IiNGaXJhQ29kZS1SZWd1bGFyLTQ0Ii8+CiAgICAgPHVzZSB4PSIxMjMuMDc2OTA0IiB4bGluazpocmVmPSIjRmlyYUNvZGUtUmVndWxhci00OSIvPgogICAgPC9nPgogICA8L2c+CiAgIDxnIGlkPSJ0ZXh0XzI4Ij4KICAgIDwhLS0gMSwyIC0tPgogICAgPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMTczLjEzMzc3MSAzNTYuNTAwOTA5KXNjYWxlKDAuMTUgLTAuMTUpIj4KICAgICA8dXNlIHhsaW5rOmhyZWY9IiNGaXJhQ29kZS1SZWd1bGFyLTQ5Ii8+CiAgICAgPHVzZSB4PSI2MS41Mzg0NTIiIHhsaW5rOmhyZWY9IiNGaXJhQ29kZS1SZWd1bGFyLTQ0Ii8+CiAgICAgPHVzZSB4PSIxMjMuMDc2OTA0IiB4bGluazpocmVmPSIjRmlyYUNvZGUtUmVndWxhci01MCIvPgogICAgPC9nPgogICA8L2c+CiAgIDxnIGlkPSJ0ZXh0XzI5Ij4KICAgIDwhLS0gMSwzIC0tPgogICAgPGcgc3R5bGU9ImZpbGw6I2U1ZmY4MDsiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDE3My4xMzM3NzEgMzAzLjc4ODE4MilzY2FsZSgwLjE1IC0wLjE1KSI+CiAgICAgPHVzZSB4bGluazpocmVmPSIjRmlyYUNvZGUtUmVndWxhci00OSIvPgogICAgIDx1c2UgeD0iNjEuNTM4NDUyIiB4bGluazpocmVmPSIjRmlyYUNvZGUtUmVndWxhci00NCIvPgogICAgIDx1c2UgeD0iMTIzLjA3NjkwNCIgeGxpbms6aHJlZj0iI0ZpcmFDb2RlLVJlZ3VsYXItNTEiLz4KICAgIDwvZz4KICAgPC9nPgogICA8ZyBpZD0idGV4dF8zMCI+CiAgICA8IS0tIDEsNCAtLT4KICAgIDxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDE3My4xMzM3NzEgMjUxLjA3NTQ1NSlzY2FsZSgwLjE1IC0wLjE1KSI+CiAgICAgPHVzZSB4bGluazpocmVmPSIjRmlyYUNvZGUtUmVndWxhci00OSIvPgogICAgIDx1c2UgeD0iNjEuNTM4NDUyIiB4bGluazpocmVmPSIjRmlyYUNvZGUtUmVndWxhci00NCIvPgogICAgIDx1c2UgeD0iMTIzLjA3NjkwNCIgeGxpbms6aHJlZj0iI0ZpcmFDb2RlLVJlZ3VsYXItNTIiLz4KICAgIDwvZz4KICAgPC9nPgogICA8ZyBpZD0idGV4dF8zMSI+CiAgICA8IS0tIDEsNSAtLT4KICAgIDxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDE3My4xMzM3NzEgMTk4LjM2MjcyNylzY2FsZSgwLjE1IC0wLjE1KSI+CiAgICAgPHVzZSB4bGluazpocmVmPSIjRmlyYUNvZGUtUmVndWxhci00OSIvPgogICAgIDx1c2UgeD0iNjEuNTM4NDUyIiB4bGluazpocmVmPSIjRmlyYUNvZGUtUmVndWxhci00NCIvPgogICAgIDx1c2UgeD0iMTIzLjA3NjkwNCIgeGxpbms6aHJlZj0iI0ZpcmFDb2RlLVJlZ3VsYXItNTMiLz4KICAgIDwvZz4KICAgPC9nPgogICA8ZyBpZD0idGV4dF8zMiI+CiAgICA8IS0tIDEsNiAtLT4KICAgIDxnIHN0eWxlPSJmaWxsOiNlNWZmODA7IiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxNzMuMTMzNzcxIDE0NS42NSlzY2FsZSgwLjE1IC0wLjE1KSI+CiAgICAgPHVzZSB4bGluazpocmVmPSIjRmlyYUNvZGUtUmVndWxhci00OSIvPgogICAgIDx1c2UgeD0iNjEuNTM4NDUyIiB4bGluazpocmVmPSIjRmlyYUNvZGUtUmVndWxhci00NCIvPgogICAgIDx1c2UgeD0iMTIzLjA3NjkwNCIgeGxpbms6aHJlZj0iI0ZpcmFDb2RlLVJlZ3VsYXItNTQiLz4KICAgIDwvZz4KICAgPC9nPgogICA8ZyBpZD0idGV4dF8zMyI+CiAgICA8IS0tIDIsMSAtLT4KICAgIDxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDIyNy4yNDI4NjIgNDM1LjU3KXNjYWxlKDAuMTUgLTAuMTUpIj4KICAgICA8dXNlIHhsaW5rOmhyZWY9IiNGaXJhQ29kZS1SZWd1bGFyLTUwIi8+CiAgICAgPHVzZSB4PSI2MS41Mzg0NTIiIHhsaW5rOmhyZWY9IiNGaXJhQ29kZS1SZWd1bGFyLTQ0Ii8+CiAgICAgPHVzZSB4PSIxMjMuMDc2OTA0IiB4bGluazpocmVmPSIjRmlyYUNvZGUtUmVndWxhci00OSIvPgogICAgPC9nPgogICA8L2c+CiAgIDxnIGlkPSJ0ZXh0XzM0Ij4KICAgIDwhLS0gMiwyIC0tPgogICAgPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMjI3LjI0Mjg2MiAzODIuODU3MjczKXNjYWxlKDAuMTUgLTAuMTUpIj4KICAgICA8dXNlIHhsaW5rOmhyZWY9IiNGaXJhQ29kZS1SZWd1bGFyLTUwIi8+CiAgICAgPHVzZSB4PSI2MS41Mzg0NTIiIHhsaW5rOmhyZWY9IiNGaXJhQ29kZS1SZWd1bGFyLTQ0Ii8+CiAgICAgPHVzZSB4PSIxMjMuMDc2OTA0IiB4bGluazpocmVmPSIjRmlyYUNvZGUtUmVndWxhci01MCIvPgogICAgPC9nPgogICA8L2c+CiAgIDxnIGlkPSJ0ZXh0XzM1Ij4KICAgIDwhLS0gMiwzIC0tPgogICAgPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMjI3LjI0Mjg2MiAzMzAuMTQ0NTQ1KXNjYWxlKDAuMTUgLTAuMTUpIj4KICAgICA8dXNlIHhsaW5rOmhyZWY9IiNGaXJhQ29kZS1SZWd1bGFyLTUwIi8+CiAgICAgPHVzZSB4PSI2MS41Mzg0NTIiIHhsaW5rOmhyZWY9IiNGaXJhQ29kZS1SZWd1bGFyLTQ0Ii8+CiAgICAgPHVzZSB4PSIxMjMuMDc2OTA0IiB4bGluazpocmVmPSIjRmlyYUNvZGUtUmVndWxhci01MSIvPgogICAgPC9nPgogICA8L2c+CiAgIDxnIGlkPSJ0ZXh0XzM2Ij4KICAgIDwhLS0gMiw0IC0tPgogICAgPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMjI3LjI0Mjg2MiAyNzcuNDMxODE4KXNjYWxlKDAuMTUgLTAuMTUpIj4KICAgICA8dXNlIHhsaW5rOmhyZWY9IiNGaXJhQ29kZS1SZWd1bGFyLTUwIi8+CiAgICAgPHVzZSB4PSI2MS41Mzg0NTIiIHhsaW5rOmhyZWY9IiNGaXJhQ29kZS1SZWd1bGFyLTQ0Ii8+CiAgICAgPHVzZSB4PSIxMjMuMDc2OTA0IiB4bGluazpocmVmPSIjRmlyYUNvZGUtUmVndWxhci01MiIvPgogICAgPC9nPgogICA8L2c+CiAgIDxnIGlkPSJ0ZXh0XzM3Ij4KICAgIDwhLS0gMiw1IC0tPgogICAgPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMjI3LjI0Mjg2MiAyMjQuNzE5MDkxKXNjYWxlKDAuMTUgLTAuMTUpIj4KICAgICA8dXNlIHhsaW5rOmhyZWY9IiNGaXJhQ29kZS1SZWd1bGFyLTUwIi8+CiAgICAgPHVzZSB4PSI2MS41Mzg0NTIiIHhsaW5rOmhyZWY9IiNGaXJhQ29kZS1SZWd1bGFyLTQ0Ii8+CiAgICAgPHVzZSB4PSIxMjMuMDc2OTA0IiB4bGluazpocmVmPSIjRmlyYUNvZGUtUmVndWxhci01MyIvPgogICAgPC9nPgogICA8L2c+CiAgIDxnIGlkPSJ0ZXh0XzM4Ij4KICAgIDwhLS0gMiw2IC0tPgogICAgPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMjI3LjI0Mjg2MiAxNzIuMDA2MzY0KXNjYWxlKDAuMTUgLTAuMTUpIj4KICAgICA8dXNlIHhsaW5rOmhyZWY9IiNGaXJhQ29kZS1SZWd1bGFyLTUwIi8+CiAgICAgPHVzZSB4PSI2MS41Mzg0NTIiIHhsaW5rOmhyZWY9IiNGaXJhQ29kZS1SZWd1bGFyLTQ0Ii8+CiAgICAgPHVzZSB4PSIxMjMuMDc2OTA0IiB4bGluazpocmVmPSIjRmlyYUNvZGUtUmVndWxhci01NCIvPgogICAgPC9nPgogICA8L2c+CiAgIDxnIGlkPSJ0ZXh0XzM5Ij4KICAgIDwhLS0gMiw3IC0tPgogICAgPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMjI3LjI0Mjg2MiAxMTkuMjkzNjM2KXNjYWxlKDAuMTUgLTAuMTUpIj4KICAgICA8dXNlIHhsaW5rOmhyZWY9IiNGaXJhQ29kZS1SZWd1bGFyLTUwIi8+CiAgICAgPHVzZSB4PSI2MS41Mzg0NTIiIHhsaW5rOmhyZWY9IiNGaXJhQ29kZS1SZWd1bGFyLTQ0Ii8+CiAgICAgPHVzZSB4PSIxMjMuMDc2OTA0IiB4bGluazpocmVmPSIjRmlyYUNvZGUtUmVndWxhci01NSIvPgogICAgPC9nPgogICA8L2c+CiAgIDxnIGlkPSJ0ZXh0XzQwIj4KICAgIDwhLS0gMywxIC0tPgogICAgPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMjgxLjM1MTk1MyA0NjEuOTI2MzY0KXNjYWxlKDAuMTUgLTAuMTUpIj4KICAgICA8dXNlIHhsaW5rOmhyZWY9IiNGaXJhQ29kZS1SZWd1bGFyLTUxIi8+CiAgICAgPHVzZSB4PSI2MS41Mzg0NTIiIHhsaW5rOmhyZWY9IiNGaXJhQ29kZS1SZWd1bGFyLTQ0Ii8+CiAgICAgPHVzZSB4PSIxMjMuMDc2OTA0IiB4bGluazpocmVmPSIjRmlyYUNvZGUtUmVndWxhci00OSIvPgogICAgPC9nPgogICA8L2c+CiAgIDxnIGlkPSJ0ZXh0XzQxIj4KICAgIDwhLS0gMywyIC0tPgogICAgPGcgc3R5bGU9ImZpbGw6I2U1ZmY4MDsiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDI4MS4zNTE5NTMgNDA5LjIxMzYzNilzY2FsZSgwLjE1IC0wLjE1KSI+CiAgICAgPHVzZSB4bGluazpocmVmPSIjRmlyYUNvZGUtUmVndWxhci01MSIvPgogICAgIDx1c2UgeD0iNjEuNTM4NDUyIiB4bGluazpocmVmPSIjRmlyYUNvZGUtUmVndWxhci00NCIvPgogICAgIDx1c2UgeD0iMTIzLjA3NjkwNCIgeGxpbms6aHJlZj0iI0ZpcmFDb2RlLVJlZ3VsYXItNTAiLz4KICAgIDwvZz4KICAgPC9nPgogICA8ZyBpZD0idGV4dF80MiI+CiAgICA8IS0tIDMsMyAtLT4KICAgIDxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDI4MS4zNTE5NTMgMzU2LjUwMDkwOSlzY2FsZSgwLjE1IC0wLjE1KSI+CiAgICAgPHVzZSB4bGluazpocmVmPSIjRmlyYUNvZGUtUmVndWxhci01MSIvPgogICAgIDx1c2UgeD0iNjEuNTM4NDUyIiB4bGluazpocmVmPSIjRmlyYUNvZGUtUmVndWxhci00NCIvPgogICAgIDx1c2UgeD0iMTIzLjA3NjkwNCIgeGxpbms6aHJlZj0iI0ZpcmFDb2RlLVJlZ3VsYXItNTEiLz4KICAgIDwvZz4KICAgPC9nPgogICA8ZyBpZD0idGV4dF80MyI+CiAgICA8IS0tIDMsNCAtLT4KICAgIDxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDI4MS4zNTE5NTMgMzAzLjc4ODE4MilzY2FsZSgwLjE1IC0wLjE1KSI+CiAgICAgPHVzZSB4bGluazpocmVmPSIjRmlyYUNvZGUtUmVndWxhci01MSIvPgogICAgIDx1c2UgeD0iNjEuNTM4NDUyIiB4bGluazpocmVmPSIjRmlyYUNvZGUtUmVndWxhci00NCIvPgogICAgIDx1c2UgeD0iMTIzLjA3NjkwNCIgeGxpbms6aHJlZj0iI0ZpcmFDb2RlLVJlZ3VsYXItNTIiLz4KICAgIDwvZz4KICAgPC9nPgogICA8ZyBpZD0idGV4dF80NCI+CiAgICA8IS0tIDMsNSAtLT4KICAgIDxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDI4MS4zNTE5NTMgMjUxLjA3NTQ1NSlzY2FsZSgwLjE1IC0wLjE1KSI+CiAgICAgPHVzZSB4bGluazpocmVmPSIjRmlyYUNvZGUtUmVndWxhci01MSIvPgogICAgIDx1c2UgeD0iNjEuNTM4NDUyIiB4bGluazpocmVmPSIjRmlyYUNvZGUtUmVndWxhci00NCIvPgogICAgIDx1c2UgeD0iMTIzLjA3NjkwNCIgeGxpbms6aHJlZj0iI0ZpcmFDb2RlLVJlZ3VsYXItNTMiLz4KICAgIDwvZz4KICAgPC9nPgogICA8ZyBpZD0idGV4dF80NSI+CiAgICA8IS0tIDMsNiAtLT4KICAgIDxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDI4MS4zNTE5NTMgMTk4LjM2MjcyNylzY2FsZSgwLjE1IC0wLjE1KSI+CiAgICAgPHVzZSB4bGluazpocmVmPSIjRmlyYUNvZGUtUmVndWxhci01MSIvPgogICAgIDx1c2UgeD0iNjEuNTM4NDUyIiB4bGluazpocmVmPSIjRmlyYUNvZGUtUmVndWxhci00NCIvPgogICAgIDx1c2UgeD0iMTIzLjA3NjkwNCIgeGxpbms6aHJlZj0iI0ZpcmFDb2RlLVJlZ3VsYXItNTQiLz4KICAgIDwvZz4KICAgPC9nPgogICA8ZyBpZD0idGV4dF80NiI+CiAgICA8IS0tIDMsNyAtLT4KICAgIDxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDI4MS4zNTE5NTMgMTQ1LjY1KXNjYWxlKDAuMTUgLTAuMTUpIj4KICAgICA8dXNlIHhsaW5rOmhyZWY9IiNGaXJhQ29kZS1SZWd1bGFyLTUxIi8+CiAgICAgPHVzZSB4PSI2MS41Mzg0NTIiIHhsaW5rOmhyZWY9IiNGaXJhQ29kZS1SZWd1bGFyLTQ0Ii8+CiAgICAgPHVzZSB4PSIxMjMuMDc2OTA0IiB4bGluazpocmVmPSIjRmlyYUNvZGUtUmVndWxhci01NSIvPgogICAgPC9nPgogICA8L2c+CiAgIDxnIGlkPSJ0ZXh0XzQ3Ij4KICAgIDwhLS0gNCwyIC0tPgogICAgPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMzM1LjQ2MTA0NCA0MzUuNTcpc2NhbGUoMC4xNSAtMC4xNSkiPgogICAgIDx1c2UgeGxpbms6aHJlZj0iI0ZpcmFDb2RlLVJlZ3VsYXItNTIiLz4KICAgICA8dXNlIHg9IjYxLjUzODQ1MiIgeGxpbms6aHJlZj0iI0ZpcmFDb2RlLVJlZ3VsYXItNDQiLz4KICAgICA8dXNlIHg9IjEyMy4wNzY5MDQiIHhsaW5rOmhyZWY9IiNGaXJhQ29kZS1SZWd1bGFyLTUwIi8+CiAgICA8L2c+CiAgIDwvZz4KICAgPGcgaWQ9InRleHRfNDgiPgogICAgPCEtLSA0LDMgLS0+CiAgICA8ZyBzdHlsZT0iZmlsbDojZTVmZjgwOyIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMzM1LjQ2MTA0NCAzODIuODU3MjczKXNjYWxlKDAuMTUgLTAuMTUpIj4KICAgICA8dXNlIHhsaW5rOmhyZWY9IiNGaXJhQ29kZS1SZWd1bGFyLTUyIi8+CiAgICAgPHVzZSB4PSI2MS41Mzg0NTIiIHhsaW5rOmhyZWY9IiNGaXJhQ29kZS1SZWd1bGFyLTQ0Ii8+CiAgICAgPHVzZSB4PSIxMjMuMDc2OTA0IiB4bGluazpocmVmPSIjRmlyYUNvZGUtUmVndWxhci01MSIvPgogICAgPC9nPgogICA8L2c+CiAgIDxnIGlkPSJ0ZXh0XzQ5Ij4KICAgIDwhLS0gNCw0IC0tPgogICAgPGcgc3R5bGU9ImZpbGw6I2U1ZmY4MDsiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDMzNS40NjEwNDQgMzMwLjE0NDU0NSlzY2FsZSgwLjE1IC0wLjE1KSI+CiAgICAgPHVzZSB4bGluazpocmVmPSIjRmlyYUNvZGUtUmVndWxhci01MiIvPgogICAgIDx1c2UgeD0iNjEuNTM4NDUyIiB4bGluazpocmVmPSIjRmlyYUNvZGUtUmVndWxhci00NCIvPgogICAgIDx1c2UgeD0iMTIzLjA3NjkwNCIgeGxpbms6aHJlZj0iI0ZpcmFDb2RlLVJlZ3VsYXItNTIiLz4KICAgIDwvZz4KICAgPC9nPgogICA8ZyBpZD0idGV4dF81MCI+CiAgICA8IS0tIDQsNSAtLT4KICAgIDxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDMzNS40NjEwNDQgMjc3LjQzMTgxOClzY2FsZSgwLjE1IC0wLjE1KSI+CiAgICAgPHVzZSB4bGluazpocmVmPSIjRmlyYUNvZGUtUmVndWxhci01MiIvPgogICAgIDx1c2UgeD0iNjEuNTM4NDUyIiB4bGluazpocmVmPSIjRmlyYUNvZGUtUmVndWxhci00NCIvPgogICAgIDx1c2UgeD0iMTIzLjA3NjkwNCIgeGxpbms6aHJlZj0iI0ZpcmFDb2RlLVJlZ3VsYXItNTMiLz4KICAgIDwvZz4KICAgPC9nPgogICA8ZyBpZD0idGV4dF81MSI+CiAgICA8IS0tIDQsNiAtLT4KICAgIDxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDMzNS40NjEwNDQgMjI0LjcxOTA5MSlzY2FsZSgwLjE1IC0wLjE1KSI+CiAgICAgPHVzZSB4bGluazpocmVmPSIjRmlyYUNvZGUtUmVndWxhci01MiIvPgogICAgIDx1c2UgeD0iNjEuNTM4NDUyIiB4bGluazpocmVmPSIjRmlyYUNvZGUtUmVndWxhci00NCIvPgogICAgIDx1c2UgeD0iMTIzLjA3NjkwNCIgeGxpbms6aHJlZj0iI0ZpcmFDb2RlLVJlZ3VsYXItNTQiLz4KICAgIDwvZz4KICAgPC9nPgogICA8ZyBpZD0idGV4dF81MiI+CiAgICA8IS0tIDQsNyAtLT4KICAgIDxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDMzNS40NjEwNDQgMTcyLjAwNjM2NClzY2FsZSgwLjE1IC0wLjE1KSI+CiAgICAgPHVzZSB4bGluazpocmVmPSIjRmlyYUNvZGUtUmVndWxhci01MiIvPgogICAgIDx1c2UgeD0iNjEuNTM4NDUyIiB4bGluazpocmVmPSIjRmlyYUNvZGUtUmVndWxhci00NCIvPgogICAgIDx1c2UgeD0iMTIzLjA3NjkwNCIgeGxpbms6aHJlZj0iI0ZpcmFDb2RlLVJlZ3VsYXItNTUiLz4KICAgIDwvZz4KICAgPC9nPgogICA8ZyBpZD0idGV4dF81MyI+CiAgICA8IS0tIDQsOCAtLT4KICAgIDxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDMzNS40NjEwNDQgMTE5LjI5MzYzNilzY2FsZSgwLjE1IC0wLjE1KSI+CiAgICAgPHVzZSB4bGluazpocmVmPSIjRmlyYUNvZGUtUmVndWxhci01MiIvPgogICAgIDx1c2UgeD0iNjEuNTM4NDUyIiB4bGluazpocmVmPSIjRmlyYUNvZGUtUmVndWxhci00NCIvPgogICAgIDx1c2UgeD0iMTIzLjA3NjkwNCIgeGxpbms6aHJlZj0iI0ZpcmFDb2RlLVJlZ3VsYXItNTYiLz4KICAgIDwvZz4KICAgPC9nPgogICA8ZyBpZD0idGV4dF81NCI+CiAgICA8IS0tIDUsMiAtLT4KICAgIDxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDM4OS41NzAxMzUgNDYxLjkyNjM2NClzY2FsZSgwLjE1IC0wLjE1KSI+CiAgICAgPHVzZSB4bGluazpocmVmPSIjRmlyYUNvZGUtUmVndWxhci01MyIvPgogICAgIDx1c2UgeD0iNjEuNTM4NDUyIiB4bGluazpocmVmPSIjRmlyYUNvZGUtUmVndWxhci00NCIvPgogICAgIDx1c2UgeD0iMTIzLjA3NjkwNCIgeGxpbms6aHJlZj0iI0ZpcmFDb2RlLVJlZ3VsYXItNTAiLz4KICAgIDwvZz4KICAgPC9nPgogICA8ZyBpZD0idGV4dF81NSI+CiAgICA8IS0tIDUsMyAtLT4KICAgIDxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDM4OS41NzAxMzUgNDA5LjIxMzYzNilzY2FsZSgwLjE1IC0wLjE1KSI+CiAgICAgPHVzZSB4bGluazpocmVmPSIjRmlyYUNvZGUtUmVndWxhci01MyIvPgogICAgIDx1c2UgeD0iNjEuNTM4NDUyIiB4bGluazpocmVmPSIjRmlyYUNvZGUtUmVndWxhci00NCIvPgogICAgIDx1c2UgeD0iMTIzLjA3NjkwNCIgeGxpbms6aHJlZj0iI0ZpcmFDb2RlLVJlZ3VsYXItNTEiLz4KICAgIDwvZz4KICAgPC9nPgogICA8ZyBpZD0idGV4dF81NiI+CiAgICA8IS0tIDUsNCAtLT4KICAgIDxnIHN0eWxlPSJmaWxsOiNlNWZmODA7IiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgzODkuNTcwMTM1IDM1Ni41MDA5MDkpc2NhbGUoMC4xNSAtMC4xNSkiPgogICAgIDx1c2UgeGxpbms6aHJlZj0iI0ZpcmFDb2RlLVJlZ3VsYXItNTMiLz4KICAgICA8dXNlIHg9IjYxLjUzODQ1MiIgeGxpbms6aHJlZj0iI0ZpcmFDb2RlLVJlZ3VsYXItNDQiLz4KICAgICA8dXNlIHg9IjEyMy4wNzY5MDQiIHhsaW5rOmhyZWY9IiNGaXJhQ29kZS1SZWd1bGFyLTUyIi8+CiAgICA8L2c+CiAgIDwvZz4KICAgPGcgaWQ9InRleHRfNTciPgogICAgPCEtLSA1LDUgLS0+CiAgICA8ZyBzdHlsZT0iZmlsbDojZTVmZjgwOyIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMzg5LjU3MDEzNSAzMDMuNzg4MTgyKXNjYWxlKDAuMTUgLTAuMTUpIj4KICAgICA8dXNlIHhsaW5rOmhyZWY9IiNGaXJhQ29kZS1SZWd1bGFyLTUzIi8+CiAgICAgPHVzZSB4PSI2MS41Mzg0NTIiIHhsaW5rOmhyZWY9IiNGaXJhQ29kZS1SZWd1bGFyLTQ0Ii8+CiAgICAgPHVzZSB4PSIxMjMuMDc2OTA0IiB4bGluazpocmVmPSIjRmlyYUNvZGUtUmVndWxhci01MyIvPgogICAgPC9nPgogICA8L2c+CiAgIDxnIGlkPSJ0ZXh0XzU4Ij4KICAgIDwhLS0gNSw2IC0tPgogICAgPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMzg5LjU3MDEzNSAyNTEuMDc1NDU1KXNjYWxlKDAuMTUgLTAuMTUpIj4KICAgICA8dXNlIHhsaW5rOmhyZWY9IiNGaXJhQ29kZS1SZWd1bGFyLTUzIi8+CiAgICAgPHVzZSB4PSI2MS41Mzg0NTIiIHhsaW5rOmhyZWY9IiNGaXJhQ29kZS1SZWd1bGFyLTQ0Ii8+CiAgICAgPHVzZSB4PSIxMjMuMDc2OTA0IiB4bGluazpocmVmPSIjRmlyYUNvZGUtUmVndWxhci01NCIvPgogICAgPC9nPgogICA8L2c+CiAgIDxnIGlkPSJ0ZXh0XzU5Ij4KICAgIDwhLS0gNSw3IC0tPgogICAgPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMzg5LjU3MDEzNSAxOTguMzYyNzI3KXNjYWxlKDAuMTUgLTAuMTUpIj4KICAgICA8dXNlIHhsaW5rOmhyZWY9IiNGaXJhQ29kZS1SZWd1bGFyLTUzIi8+CiAgICAgPHVzZSB4PSI2MS41Mzg0NTIiIHhsaW5rOmhyZWY9IiNGaXJhQ29kZS1SZWd1bGFyLTQ0Ii8+CiAgICAgPHVzZSB4PSIxMjMuMDc2OTA0IiB4bGluazpocmVmPSIjRmlyYUNvZGUtUmVndWxhci01NSIvPgogICAgPC9nPgogICA8L2c+CiAgIDxnIGlkPSJ0ZXh0XzYwIj4KICAgIDwhLS0gNSw4IC0tPgogICAgPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMzg5LjU3MDEzNSAxNDUuNjUpc2NhbGUoMC4xNSAtMC4xNSkiPgogICAgIDx1c2UgeGxpbms6aHJlZj0iI0ZpcmFDb2RlLVJlZ3VsYXItNTMiLz4KICAgICA8dXNlIHg9IjYxLjUzODQ1MiIgeGxpbms6aHJlZj0iI0ZpcmFDb2RlLVJlZ3VsYXItNDQiLz4KICAgICA8dXNlIHg9IjEyMy4wNzY5MDQiIHhsaW5rOmhyZWY9IiNGaXJhQ29kZS1SZWd1bGFyLTU2Ii8+CiAgICA8L2c+CiAgIDwvZz4KICAgPGcgaWQ9InRleHRfNjEiPgogICAgPCEtLSA2LDMgLS0+CiAgICA8ZyBzdHlsZT0iZmlsbDojZTVmZjgwOyIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoNDQzLjY3OTIyNiA0MzUuNTcpc2NhbGUoMC4xNSAtMC4xNSkiPgogICAgIDx1c2UgeGxpbms6aHJlZj0iI0ZpcmFDb2RlLVJlZ3VsYXItNTQiLz4KICAgICA8dXNlIHg9IjYxLjUzODQ1MiIgeGxpbms6aHJlZj0iI0ZpcmFDb2RlLVJlZ3VsYXItNDQiLz4KICAgICA8dXNlIHg9IjEyMy4wNzY5MDQiIHhsaW5rOmhyZWY9IiNGaXJhQ29kZS1SZWd1bGFyLTUxIi8+CiAgICA8L2c+CiAgIDwvZz4KICAgPGcgaWQ9InRleHRfNjIiPgogICAgPCEtLSA2LDQgLS0+CiAgICA8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSg0NDMuNjc5MjI2IDM4Mi44NTcyNzMpc2NhbGUoMC4xNSAtMC4xNSkiPgogICAgIDx1c2UgeGxpbms6aHJlZj0iI0ZpcmFDb2RlLVJlZ3VsYXItNTQiLz4KICAgICA8dXNlIHg9IjYxLjUzODQ1MiIgeGxpbms6aHJlZj0iI0ZpcmFDb2RlLVJlZ3VsYXItNDQiLz4KICAgICA8dXNlIHg9IjEyMy4wNzY5MDQiIHhsaW5rOmhyZWY9IiNGaXJhQ29kZS1SZWd1bGFyLTUyIi8+CiAgICA8L2c+CiAgIDwvZz4KICAgPGcgaWQ9InRleHRfNjMiPgogICAgPCEtLSA2LDUgLS0+CiAgICA8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSg0NDMuNjc5MjI2IDMzMC4xNDQ1NDUpc2NhbGUoMC4xNSAtMC4xNSkiPgogICAgIDx1c2UgeGxpbms6aHJlZj0iI0ZpcmFDb2RlLVJlZ3VsYXItNTQiLz4KICAgICA8dXNlIHg9IjYxLjUzODQ1MiIgeGxpbms6aHJlZj0iI0ZpcmFDb2RlLVJlZ3VsYXItNDQiLz4KICAgICA8dXNlIHg9IjEyMy4wNzY5MDQiIHhsaW5rOmhyZWY9IiNGaXJhQ29kZS1SZWd1bGFyLTUzIi8+CiAgICA8L2c+CiAgIDwvZz4KICAgPGcgaWQ9InRleHRfNjQiPgogICAgPCEtLSA2LDYgLS0+CiAgICA8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSg0NDMuNjc5MjI2IDI3Ny40MzE4MTgpc2NhbGUoMC4xNSAtMC4xNSkiPgogICAgIDx1c2UgeGxpbms6aHJlZj0iI0ZpcmFDb2RlLVJlZ3VsYXItNTQiLz4KICAgICA8dXNlIHg9IjYxLjUzODQ1MiIgeGxpbms6aHJlZj0iI0ZpcmFDb2RlLVJlZ3VsYXItNDQiLz4KICAgICA8dXNlIHg9IjEyMy4wNzY5MDQiIHhsaW5rOmhyZWY9IiNGaXJhQ29kZS1SZWd1bGFyLTU0Ii8+CiAgICA8L2c+CiAgIDwvZz4KICAgPGcgaWQ9InRleHRfNjUiPgogICAgPCEtLSA2LDcgLS0+CiAgICA8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSg0NDMuNjc5MjI2IDIyNC43MTkwOTEpc2NhbGUoMC4xNSAtMC4xNSkiPgogICAgIDx1c2UgeGxpbms6aHJlZj0iI0ZpcmFDb2RlLVJlZ3VsYXItNTQiLz4KICAgICA8dXNlIHg9IjYxLjUzODQ1MiIgeGxpbms6aHJlZj0iI0ZpcmFDb2RlLVJlZ3VsYXItNDQiLz4KICAgICA8dXNlIHg9IjEyMy4wNzY5MDQiIHhsaW5rOmhyZWY9IiNGaXJhQ29kZS1SZWd1bGFyLTU1Ii8+CiAgICA8L2c+CiAgIDwvZz4KICAgPGcgaWQ9InRleHRfNjYiPgogICAgPCEtLSA2LDggLS0+CiAgICA8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSg0NDMuNjc5MjI2IDE3Mi4wMDYzNjQpc2NhbGUoMC4xNSAtMC4xNSkiPgogICAgIDx1c2UgeGxpbms6aHJlZj0iI0ZpcmFDb2RlLVJlZ3VsYXItNTQiLz4KICAgICA8dXNlIHg9IjYxLjUzODQ1MiIgeGxpbms6aHJlZj0iI0ZpcmFDb2RlLVJlZ3VsYXItNDQiLz4KICAgICA8dXNlIHg9IjEyMy4wNzY5MDQiIHhsaW5rOmhyZWY9IiNGaXJhQ29kZS1SZWd1bGFyLTU2Ii8+CiAgICA8L2c+CiAgIDwvZz4KICAgPGcgaWQ9InRleHRfNjciPgogICAgPCEtLSA2LDkgLS0+CiAgICA8ZGVmcz4KICAgICA8cGF0aCBkPSJNIDI5LjY4NzUgNzEuNjQwNjI1IApDIDE2Ljk2ODc1IDcxLjY0MDYyNSA2LjgyODEyNSA2My41OTM3NSA2LjgyODEyNSA0OC40Njg3NSAKQyA2LjgyODEyNSAzNC4zMTI1IDE1LjI4MTI1IDI1Ljg5MDYyNSAyNy4wMzEyNSAyNS44OTA2MjUgCkMgMzQuMTA5Mzc1IDI1Ljg5MDYyNSAzOS40ODQzNzUgMjkuMzI4MTI1IDQzLjU0Njg3NSAzNC4zMTI1IApDIDQyLjU2MjUgMTcuNTMxMjUgMzIuNjA5Mzc1IDkuODQzNzUgMTMuMDc4MTI1IDQuNDA2MjUgCkwgMTUuMDc4MTI1IC0yLjE1NjI1IApDIDQxLjQ4NDM3NSA1LjEyNSA1Mi43MTg3NSAxNC4yMDMxMjUgNTIuNzE4NzUgNDIuNzY1NjI1IApDIDUyLjcxODc1IDYwLjUxNTYyNSA0NS4wNzgxMjUgNzEuNjQwNjI1IDI5LjY4NzUgNzEuNjQwNjI1IAp6Ck0gMTUuNzUgNDguMTU2MjUgCkMgMTUuNzUgNTguOTY4NzUgMjAuNTE1NjI1IDY0LjY3MTg3NSAyOS42ODc1IDY0LjY3MTg3NSAKQyAzOS4wNzgxMjUgNjQuNjcxODc1IDQzLjU0Njg3NSA1OC41NjI1IDQzLjc1IDQxLjk1MzEyNSAKQyAzOS41NDY4NzUgMzYuMjUgMzQuOTY4NzUgMzIuNzY1NjI1IDI4LjYwOTM3NSAzMi43NjU2MjUgCkMgMjAuNTYyNSAzMi43NjU2MjUgMTUuNzUgMzcuMzkwNjI1IDE1Ljc1IDQ4LjE1NjI1IAp6CiIgaWQ9IkZpcmFDb2RlLVJlZ3VsYXItNTciLz4KICAgIDwvZGVmcz4KICAgIDxnIHN0eWxlPSJmaWxsOiNlNWZmODA7IiB0cmFuc2Zvcm09InRyYW5zbGF0ZSg0NDMuNjc5MjI2IDExOS4yOTM2MzYpc2NhbGUoMC4xNSAtMC4xNSkiPgogICAgIDx1c2UgeGxpbms6aHJlZj0iI0ZpcmFDb2RlLVJlZ3VsYXItNTQiLz4KICAgICA8dXNlIHg9IjYxLjUzODQ1MiIgeGxpbms6aHJlZj0iI0ZpcmFDb2RlLVJlZ3VsYXItNDQiLz4KICAgICA8dXNlIHg9IjEyMy4wNzY5MDQiIHhsaW5rOmhyZWY9IiNGaXJhQ29kZS1SZWd1bGFyLTU3Ii8+CiAgICA8L2c+CiAgIDwvZz4KICAgPGcgaWQ9InRleHRfNjgiPgogICAgPCEtLSBBeGlhbCBBZGRyZXNzZXMgLS0+CiAgICA8ZGVmcz4KICAgICA8cGF0aCBkPSJNIDQ0LjQ2ODc1IDE4IApMIDUwLjEwOTM3NSAwIApMIDU5LjQzNzUgMCAKTCAzNi40Njg3NSA3MC42MDkzNzUgCkwgMjUuMDc4MTI1IDcwLjYwOTM3NSAKTCAyLjEwOTM3NSAwIApMIDEwLjg3NSAwIApMIDE2LjUxNTYyNSAxOCAKegpNIDE4LjgyODEyNSAyNS4zOTA2MjUgCkwgMzAuNTYyNSA2My4xMjUgCkwgNDIuMTU2MjUgMjUuMzkwNjI1IAp6CiIgaWQ9IkZpcmFDb2RlLVJlZ3VsYXItNjUiLz4KICAgICA8cGF0aCBkPSJNIDMwLjc2NTYyNSA3OS4yODEyNSAKQyAyNy4xMjUgNzkuMjgxMjUgMjQuNTYyNSA3Ni42NzE4NzUgMjQuNTYyNSA3My4yODEyNSAKQyAyNC41NjI1IDY5Ljc5Njg3NSAyNy4xMjUgNjcuMTI1IDMwLjc2NTYyNSA2Ny4xMjUgCkMgMzQuNjA5Mzc1IDY3LjEyNSAzNy4wNzgxMjUgNjkuNzk2ODc1IDM3LjA3ODEyNSA3My4yODEyNSAKQyAzNy4wNzgxMjUgNzYuNjcxODc1IDM0LjYwOTM3NSA3OS4yODEyNSAzMC43NjU2MjUgNzkuMjgxMjUgCnoKTSAzNy42NDA2MjUgNTQgCkwgMTIuODc1IDU0IApMIDEyLjg3NSA0Ny4xNzE4NzUgCkwgMjkuMDMxMjUgNDcuMTcxODc1IApMIDI5LjAzMTI1IDYuODI4MTI1IApMIDEyLjM1OTM3NSA2LjgyODEyNSAKTCAxMi4zNTkzNzUgMCAKTCA1Mi44NzUgMCAKTCA1Mi44NzUgNi44MjgxMjUgCkwgMzcuNjQwNjI1IDYuODI4MTI1IAp6CiIgaWQ9IkZpcmFDb2RlLVJlZ3VsYXItMTA1Ii8+CiAgICAgPHBhdGggZD0iTSA0OC45Njg3NSAxMS43OTY4NzUgCkwgNDguOTY4NzUgMzcuNjg3NSAKQyA0OC45Njg3NSA0OC4zNTkzNzUgNDIuMjAzMTI1IDU1LjEyNSAyOC43NjU2MjUgNTUuMTI1IApDIDIzLjU0Njg3NSA1NS4xMjUgMTcuNjg3NSA1NC4yMDMxMjUgMTEuMTI1IDUxLjc1IApMIDEzLjM5MDYyNSA0NS4yMzQzNzUgCkMgMTguOTY4NzUgNDcuMTcxODc1IDIzLjg0Mzc1IDQ4IDI3LjQzNzUgNDggCkMgMzUuNDg0Mzc1IDQ4IDQwLjMxMjUgNDUuMDc4MTI1IDQwLjMxMjUgMzcuMjgxMjUgCkwgNDAuMzEyNSAzMi43NjU2MjUgCkwgMzIuMzU5Mzc1IDMyLjc2NTYyNSAKQyAxNS45NTMxMjUgMzIuNzY1NjI1IDcuMDMxMjUgMjYuNjA5Mzc1IDcuMDMxMjUgMTUuNDg0Mzc1IApDIDcuMDMxMjUgNS40Mzc1IDEzLjY0MDYyNSAtMS4xNzE4NzUgMjQuNDY4NzUgLTEuMTcxODc1IApDIDMxLjQzNzUgLTEuMTcxODc1IDM3LjU0Njg3NSAxLjM5MDYyNSA0MS4zOTA2MjUgNi40MDYyNSAKQyA0Mi45MjE4NzUgMS41OTM3NSA0Ni42MDkzNzUgLTAuNTYyNSA1MS4yODEyNSAtMS4xNzE4NzUgCkwgNTMuMzkwNjI1IDQuODc1IApDIDUwLjM1OTM3NSA1Ljc5Njg3NSA0OC45Njg3NSA3LjQzNzUgNDguOTY4NzUgMTEuNzk2ODc1IAp6Ck0gMjYuNjcxODc1IDUuMzkwNjI1IApDIDE5LjY0MDYyNSA1LjM5MDYyNSAxNi4yNSA4Ljg3NSAxNi4yNSAxNS41OTM3NSAKQyAxNi4yNSAyMi41MTU2MjUgMjAuNjA5Mzc1IDI2LjkyMTg3NSAzMi41MTU2MjUgMjYuOTIxODc1IApMIDQwLjMxMjUgMjYuOTIxODc1IApMIDQwLjMxMjUgMTMuMDMxMjUgCkMgMzcuMDc4MTI1IDguMjAzMTI1IDMyIDUuMzkwNjI1IDI2LjY3MTg3NSA1LjM5MDYyNSAKegoiIGlkPSJGaXJhQ29kZS1SZWd1bGFyLTk3Ii8+CiAgICAgPHBhdGggZD0iTSAxNy4wNzgxMjUgMjMuOTUzMTI1IApMIDUzLjM5MDYyNSAyMy45NTMxMjUgCkMgNTMuNDg0Mzc1IDI1LjEyNSA1My41OTM3NSAyNi44MjgxMjUgNTMuNTkzNzUgMjguNjcxODc1IApDIDUzLjU5Mzc1IDQ1LjA3ODEyNSA0NS4yODEyNSA1NS4xMjUgMzEuNjQwNjI1IDU1LjEyNSAKQyAxNy4yODEyNSA1NS4xMjUgOC4wNDY4NzUgNDMuMjgxMjUgOC4wNDY4NzUgMjYuOTIxODc1IApDIDguMDQ2ODc1IDEwLjE1NjI1IDE2Ljk2ODc1IC0xLjE3MTg3NSAzMi43NjU2MjUgLTEuMTcxODc1IApDIDM5LjQ4NDM3NSAtMS4xNzE4NzUgNDYuMzEyNSAxLjIzNDM3NSA1MS4zMjgxMjUgNS4xNzE4NzUgCkwgNDcuMjgxMjUgMTAuODc1IApDIDQyLjUxNTYyNSA3LjY0MDYyNSAzOC4zNTkzNzUgNiAzMi44NzUgNiAKQyAyNC41MTU2MjUgNiAxNy41NDY4NzUgMTEuNDM3NSAxNy4wNzgxMjUgMjMuOTUzMTI1IAp6Ck0gMzEuNzUgNDguMDQ2ODc1IApDIDM5Ljg0Mzc1IDQ4LjA0Njg3NSA0NS4wNzgxMjUgNDIuMTU2MjUgNDUuMjgxMjUgMzAuNjA5Mzc1IApMIDE3LjEyNSAzMC42MDkzNzUgCkMgMTcuODQzNzUgNDIuNTE1NjI1IDIzLjY4NzUgNDguMDQ2ODc1IDMxLjc1IDQ4LjA0Njg3NSAKegoiIGlkPSJGaXJhQ29kZS1SZWd1bGFyLTEwMSIvPgogICAgIDxwYXRoIGQ9Ik0gMjguNjcxODc1IDUuOTUzMTI1IApDIDIyLjMxMjUgNS45NTMxMjUgMTYuNjcxODc1IDguMjUgMTIuNDY4NzUgMTEuNzk2ODc1IApMIDcuNTQ2ODc1IDYuMTA5Mzc1IApDIDEyLjE1NjI1IDIuMTA5Mzc1IDE4LjkyMTg3NSAtMS4xNzE4NzUgMjguNjcxODc1IC0xLjE3MTg3NSAKQyA0MC4yMDMxMjUgLTEuMTcxODc1IDUxLjQzNzUgMy4zOTA2MjUgNTEuNDM3NSAxNC45MjE4NzUgCkMgNTEuNDM3NSAyNS4wMzEyNSA0NC40Njg3NSAyOC43MTg3NSAzMy44OTA2MjUgMzEuNTkzNzUgCkMgMjIuOTY4NzUgMzQuNTYyNSAxOS41NDY4NzUgMzYuMjUgMTkuNTQ2ODc1IDQxLjA3ODEyNSAKQyAxOS41NDY4NzUgNDUuMjM0Mzc1IDIyLjcxODc1IDQ4LjE1NjI1IDMxLjIzNDM3NSA0OC4xNTYyNSAKQyAzOC4yMDMxMjUgNDguMTU2MjUgNDIuODc1IDQ2LjEwOTM3NSA0Ni45MjE4NzUgNDMuMzI4MTI1IApMIDUwLjcxODc1IDQ5LjE3MTg3NSAKQyA0Ni4yMDMxMjUgNTIuNTE1NjI1IDM5Ljc5Njg3NSA1NS4xMjUgMzEuMTI1IDU1LjEyNSAKQyAxOC45MjE4NzUgNTUuMTI1IDEwLjYwOTM3NSA0OS40ODQzNzUgMTAuNjA5Mzc1IDQwLjQwNjI1IApDIDEwLjYwOTM3NSAzMS4wMzEyNSAxNy43OTY4NzUgMjcuNjQwNjI1IDI5LjAzMTI1IDI0Ljg3NSAKQyA0MC40Njg3NSAyMiA0Mi4xMDkzNzUgMTkuMzkwNjI1IDQyLjEwOTM3NSAxNC41MTU2MjUgCkMgNDIuMTA5Mzc1IDkuMjgxMjUgMzYuOTY4NzUgNS45NTMxMjUgMjguNjcxODc1IDUuOTUzMTI1IAp6CiIgaWQ9IkZpcmFDb2RlLVJlZ3VsYXItMTE1Ii8+CiAgICA8L2RlZnM+CiAgICA8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgyMTIuMTExNzE5IDYzLjEyKXNjYWxlKDAuMTggLTAuMTgpIj4KICAgICA8dXNlIHhsaW5rOmhyZWY9IiNGaXJhQ29kZS1SZWd1bGFyLTY1Ii8+CiAgICAgPHVzZSB4PSI2MS41Mzg0NTIiIHhsaW5rOmhyZWY9IiNGaXJhQ29kZS1SZWd1bGFyLTEyMCIvPgogICAgIDx1c2UgeD0iMTIzLjA3NjkwNCIgeGxpbms6aHJlZj0iI0ZpcmFDb2RlLVJlZ3VsYXItMTA1Ii8+CiAgICAgPHVzZSB4PSIxODQuNjE1MzU2IiB4bGluazpocmVmPSIjRmlyYUNvZGUtUmVndWxhci05NyIvPgogICAgIDx1c2UgeD0iMjQ2LjE1MzgwOSIgeGxpbms6aHJlZj0iI0ZpcmFDb2RlLVJlZ3VsYXItMTA4Ii8+CiAgICAgPHVzZSB4PSIzMDcuNjkyMjYxIiB4bGluazpocmVmPSIjRmlyYUNvZGUtUmVndWxhci0zMiIvPgogICAgIDx1c2UgeD0iMzY5LjIzMDcxMyIgeGxpbms6aHJlZj0iI0ZpcmFDb2RlLVJlZ3VsYXItNjUiLz4KICAgICA8dXNlIHg9IjQzMC43NjkxNjUiIHhsaW5rOmhyZWY9IiNGaXJhQ29kZS1SZWd1bGFyLTEwMCIvPgogICAgIDx1c2UgeD0iNDkyLjMwNzYxNyIgeGxpbms6aHJlZj0iI0ZpcmFDb2RlLVJlZ3VsYXItMTAwIi8+CiAgICAgPHVzZSB4PSI1NTMuODQ2MDY5IiB4bGluazpocmVmPSIjRmlyYUNvZGUtUmVndWxhci0xMTQiLz4KICAgICA8dXNlIHg9IjYxNS4zODQ1MjEiIHhsaW5rOmhyZWY9IiNGaXJhQ29kZS1SZWd1bGFyLTEwMSIvPgogICAgIDx1c2UgeD0iNjc2LjkyMjk3NCIgeGxpbms6aHJlZj0iI0ZpcmFDb2RlLVJlZ3VsYXItMTE1Ii8+CiAgICAgPHVzZSB4PSI3MzguNDYxNDI2IiB4bGluazpocmVmPSIjRmlyYUNvZGUtUmVndWxhci0xMTUiLz4KICAgICA8dXNlIHg9Ijc5OS45OTk4NzgiIHhsaW5rOmhyZWY9IiNGaXJhQ29kZS1SZWd1bGFyLTEwMSIvPgogICAgIDx1c2UgeD0iODYxLjUzODMzIiB4bGluazpocmVmPSIjRmlyYUNvZGUtUmVndWxhci0xMTUiLz4KICAgIDwvZz4KICAgPC9nPgogIDwvZz4KIDwvZz4KIDxkZWZzPgogIDxjbGlwUGF0aCBpZD0icDgyYmNiMzBkMDYiPgogICA8cmVjdCBoZWlnaHQ9IjQzNC44OCIgd2lkdGg9IjQ0Ni40IiB4PSI3MiIgeT0iNjkuMTIiLz4KICA8L2NsaXBQYXRoPgogPC9kZWZzPgo8L3N2Zz4K&quot;/&gt;</span>
+<span class="doccomment">//! &lt;/div&gt;</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! The choice of geometry in the World frame is to make the conversion</span>
+<span class="doccomment">//! convenient. An explanation of the full conversion algorithm can be found</span>
+<span class="doccomment">//! [here](https://jthorniley.github.io/notebooks/hex.html).</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! Converting from a World coordinate to Axial coordinates will find the</span>
+<span class="doccomment">//! hexagon that contains that world coordinate. Converting from the Axial</span>
+<span class="doccomment">//! coordinate back to World coordinates will find the _origin_ of the</span>
+<span class="doccomment">//! specified hexagon, i.e. the `0, 0` point on the geometry shown below:</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! &lt;div&gt;</span>
+<span class="doccomment">//! &lt;img src=&quot;https://jthorniley.github.io/notebooks/_images/hex_5_0.svg&quot;/&gt;</span>
+<span class="doccomment">//! &lt;/div&gt;</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! This means that the point retrieved by the Axial to World conversion is</span>
+<span class="doccomment">//! *not* inside the hexagon at that axial address. The following example</span>
+<span class="doccomment">//! may clarify this further:</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! ```</span>
+<span class="doccomment">//! use hexeng::{World, Axial, Recast, ViewTransform};</span>
+<span class="doccomment">//! use nalgebra::Matrix3;</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! // To use the Recast trait, we must define the View transform (but</span>
+<span class="doccomment">//! // since we are not using the View frame in this example, its value is</span>
+<span class="doccomment">//! // not important - just use the identity matrix).</span>
+<span class="doccomment">//! let view_transform = Matrix3::identity();</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! // World point 1.5, 6.0 is inside the 1, 3 hexagon</span>
+<span class="doccomment">//! let world = World::from([1.5, 6.0]);</span>
+<span class="doccomment">//! let axial: Axial = world.recast(&amp;view_transform);</span>
+<span class="doccomment">//! assert_eq!(axial.as_slice(), &amp;[1, 3]);</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! // The &quot;origin coordinate&quot; of the 1, 3 hexagon is found</span>
+<span class="doccomment">//! // by converting back to world coordinates. Note that the</span>
+<span class="doccomment">//! // origin is actually *not* inside the 1, 3 hexagon as it is</span>
+<span class="doccomment">//! // at the lower left corner!</span>
+<span class="doccomment">//! let origin: World = axial.recast(&amp;view_transform);</span>
+<span class="doccomment">//! assert_eq!(origin.as_slice(), &amp;[1.0, 5.0]);</span>
+<span class="doccomment">//! assert_eq!(Recast::&lt;Axial&gt;::recast(origin, &amp;view_transform).as_array(), [0, 2]);</span>
+<span class="doccomment">//! ```</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! ## World to/from View coordinates</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! The conversion between world and view is defined by a transformation</span>
+<span class="doccomment">//! that must be supplied to the [recast](trait.Recast.html#tymethod.recast)</span>
+<span class="doccomment">//! method by way of the [ViewTransform](trait.ViewTransform.html) trait.</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! The transformation should be specified using the geometry system provided</span>
+<span class="doccomment">//! by the [nalgebra](https://www.nalgebra.org/rustdoc/nalgebra/geometry/index.html)</span>
+<span class="doccomment">//! crate.</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! ```</span>
+<span class="doccomment">//! use hexeng::{World, View, Recast, ViewTransform};</span>
+<span class="doccomment">//! use nalgebra::{Vector2, Matrix3};</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! fn get_transform(translation: [f64; 2], scale: [f64; 2]) -&gt; Matrix3&lt;f64&gt; {</span>
+<span class="doccomment">//!     Matrix3::identity()</span>
+<span class="doccomment">//!         .append_translation(&amp;Vector2::from(translation))</span>
+<span class="doccomment">//!         .append_nonuniform_scaling(&amp;Vector2::from(scale))</span>
+<span class="doccomment">//! }</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! let world = World::from([2.0, 3.5]);</span>
+<span class="doccomment">//! let view: View = world.recast(&amp;get_transform([0.1, 0.2], [1., 1.]));</span>
+<span class="doccomment">//! assert_eq!(view.as_slice(), &amp;[2.1, 3.7]);</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! // Converting from view to world applies the inverse transform</span>
+<span class="doccomment">//! let view = View::from([2.0, 3.5]);</span>
+<span class="doccomment">//! let world: World = view.recast(&amp;get_transform([0., 0.], [0.5, 0.5]));</span>
+<span class="doccomment">//! assert_eq!(world.as_slice(), &amp;[4.0, 7.0]);</span>
+<span class="doccomment">//! ```</span>
+<span class="kw">mod</span> <span class="ident">convert</span>;
+
+<span class="kw">use</span> <span class="ident">nalgebra</span>::{<span class="ident">Matrix3</span>, <span class="ident">Point2</span>, <span class="ident">Projective2</span>, <span class="ident">Scalar</span>};
+<span class="kw">use</span> <span class="ident">num_traits</span>::{<span class="ident">One</span>, <span class="ident">Zero</span>};
+<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">convert</span>::<span class="ident">From</span>;
+<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">marker</span>::<span class="ident">PhantomData</span>;
+<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">ops</span>::{<span class="ident">Deref</span>, <span class="ident">Div</span>, <span class="ident">DivAssign</span>};
+
+<span class="doccomment">/// Implemented by objects that can be treated as transformations between</span>
+<span class="doccomment">/// world/view coordinates.</span>
+<span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">ViewTransform</span>: <span class="ident">Sized</span> {
+    <span class="doccomment">/// Reference type for the view transform</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// This can be customised by the implementation to use anything that</span>
+    <span class="doccomment">/// dereferences to a `Projective2&lt;f64&gt;` - for example a normal reference</span>
+    <span class="doccomment">/// or a `Box`.</span>
+    <span class="kw">type</span> <span class="ident">Ref</span>: <span class="ident">Deref</span><span class="op">&lt;</span><span class="ident">Target</span> <span class="op">=</span> <span class="ident">Projective2</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span><span class="op">&gt;</span>;
+
+    <span class="doccomment">/// Retrieve the view transform associated with this instance.</span>
+    <span class="kw">fn</span> <span class="ident">view_transform</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Ref</span>;
+}
+
+<span class="doccomment">/// Treat a Matrix3 as a ViewTransform.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// For convenience, the easiest way to specify a</span>
+<span class="doccomment">/// [ViewTransform](trait.ViewTransform.html) to the</span>
+<span class="doccomment">/// [Recast](trait.Recast.html) trait is to simply used a 3x3 matrix</span>
+<span class="doccomment">/// defining the transform.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// *Important* The matrix must be invertible! This will not be checked (the</span>
+<span class="doccomment">/// client must ensure this).</span>
+<span class="kw">impl</span> <span class="ident">ViewTransform</span> <span class="kw">for</span> <span class="ident">Matrix3</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span> {
+    <span class="kw">type</span> <span class="ident">Ref</span> <span class="op">=</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">Projective2</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span><span class="op">&gt;</span>;
+
+    <span class="kw">fn</span> <span class="ident">view_transform</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">Ref</span> {
+        <span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">Projective2</span>::<span class="ident">from_matrix_unchecked</span>(<span class="self">self</span>.<span class="ident">clone</span>()))
+    }
+}
+
+<span class="doccomment">/// Used to identify Frame objects that are in Axial coordinates by typing.</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">PartialEq</span>, <span class="ident">Clone</span>)]</span>
+<span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">test</span>, <span class="ident">derive</span>(<span class="ident">Debug</span>))]</span>
+<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">TAxial</span> {}
+
+<span class="doccomment">/// Used to identify Frame objects that are in World coordinates by typing.</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">PartialEq</span>, <span class="ident">Clone</span>)]</span>
+<span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">test</span>, <span class="ident">derive</span>(<span class="ident">Debug</span>))]</span>
+<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">TWorld</span> {}
+
+<span class="doccomment">/// Used to identify Frame objects that are in View coordinates by typing.</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">PartialEq</span>, <span class="ident">Clone</span>)]</span>
+<span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">test</span>, <span class="ident">derive</span>(<span class="ident">Debug</span>))]</span>
+<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">TView</span> {}
+
+<span class="doccomment">/// An object representing a point within a specified frame.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// The frame is included in the type by the parameter T, which</span>
+<span class="doccomment">/// should be one of TAxial, TWorld or TView.</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">PartialEq</span>, <span class="ident">Clone</span>)]</span>
+<span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">test</span>, <span class="ident">derive</span>(<span class="ident">Debug</span>))]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Frame</span><span class="op">&lt;</span><span class="ident">V</span>: <span class="ident">Scalar</span>, <span class="ident">T</span><span class="op">&gt;</span>(<span class="ident">Point2</span><span class="op">&lt;</span><span class="ident">V</span><span class="op">&gt;</span>, <span class="ident">PhantomData</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>);
+
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">V</span>: <span class="ident">Scalar</span>, <span class="ident">T</span><span class="op">&gt;</span> <span class="ident">Frame</span><span class="op">&lt;</span><span class="ident">V</span>, <span class="ident">T</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">as_slice</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span>[<span class="ident">V</span>] {
+        <span class="self">self</span>.<span class="number">0</span>.<span class="ident">coords</span>.<span class="ident">as_slice</span>()
+    }
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">as_array</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> [<span class="ident">V</span>; <span class="number">2</span>] {
+        <span class="self">self</span>.<span class="number">0</span>.<span class="ident">coords</span>.<span class="ident">into</span>()
+    }
+}
+
+<span class="doccomment">/// Axial coordinates</span>
+<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">Axial</span> <span class="op">=</span> <span class="ident">Frame</span><span class="op">&lt;</span><span class="ident">i64</span>, <span class="ident">TAxial</span><span class="op">&gt;</span>;
+<span class="doccomment">/// World coordinates</span>
+<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">World</span> <span class="op">=</span> <span class="ident">Frame</span><span class="op">&lt;</span><span class="ident">f64</span>, <span class="ident">TWorld</span><span class="op">&gt;</span>;
+<span class="doccomment">/// View coordinates</span>
+<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">View</span> <span class="op">=</span> <span class="ident">Frame</span><span class="op">&lt;</span><span class="ident">f64</span>, <span class="ident">TView</span><span class="op">&gt;</span>;
+
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">V</span>: <span class="ident">Scalar</span> <span class="op">+</span> <span class="ident">One</span>, <span class="ident">T</span><span class="op">&gt;</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">Point2</span><span class="op">&lt;</span><span class="ident">V</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Frame</span><span class="op">&lt;</span><span class="ident">V</span>, <span class="ident">T</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">pt</span>: <span class="ident">Point2</span><span class="op">&lt;</span><span class="ident">V</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Frame</span><span class="op">&lt;</span><span class="ident">V</span>, <span class="ident">T</span><span class="op">&gt;</span> {
+        <span class="ident">Frame</span>(<span class="ident">pt</span>, <span class="ident">PhantomData</span>)
+    }
+}
+
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">V</span>: <span class="ident">Scalar</span> <span class="op">+</span> <span class="ident">One</span> <span class="op">+</span> <span class="ident">Zero</span> <span class="op">+</span> <span class="ident">Div</span><span class="op">&lt;</span><span class="ident">Output</span> <span class="op">=</span> <span class="ident">V</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">DivAssign</span>, <span class="ident">T</span><span class="op">&gt;</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">Frame</span><span class="op">&lt;</span><span class="ident">V</span>, <span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Point2</span><span class="op">&lt;</span><span class="ident">V</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">fr</span>: <span class="ident">Frame</span><span class="op">&lt;</span><span class="ident">V</span>, <span class="ident">T</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Point2</span><span class="op">&lt;</span><span class="ident">V</span><span class="op">&gt;</span> {
+        <span class="ident">Point2</span>::<span class="ident">from</span>(<span class="ident">fr</span>.<span class="number">0</span>.<span class="ident">coords</span>)
+    }
+}
+
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">V</span>: <span class="ident">Scalar</span> <span class="op">+</span> <span class="ident">One</span>, <span class="ident">T</span><span class="op">&gt;</span> <span class="ident">From</span><span class="op">&lt;</span>[<span class="ident">V</span>; <span class="number">2</span>]<span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Frame</span><span class="op">&lt;</span><span class="ident">V</span>, <span class="ident">T</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">pt</span>: [<span class="ident">V</span>; <span class="number">2</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Frame</span><span class="op">&lt;</span><span class="ident">V</span>, <span class="ident">T</span><span class="op">&gt;</span> {
+        <span class="ident">Frame</span>(<span class="ident">Point2</span>::<span class="ident">from</span>(<span class="ident">pt</span>), <span class="ident">PhantomData</span>)
+    }
+}
+
+<span class="doccomment">/// Trait implemented by all the frame types (Axial, View and World).</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// This can be used as a base type that can accept any Frame object.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// # Example</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// ```</span>
+<span class="doccomment">/// use hexeng::{Recast, ViewTransform, AnyFrame, View, World};</span>
+<span class="doccomment">/// use nalgebra::Matrix3;</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// fn check_value(value: impl hexeng::AnyFrame) {</span>
+<span class="doccomment">///     let view: View = value.recast(&amp;Matrix3::identity());</span>
+<span class="doccomment">///     assert_eq!(view.as_slice(), &amp;[1., 1.])</span>
+<span class="doccomment">/// }</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// check_value(World::from([1., 1.]));</span>
+<span class="doccomment">/// check_value(View::from([1., 1.]));</span>
+<span class="doccomment">/// ```</span>
+<span class="doccomment">///</span>
+<span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">AnyFrame</span>: <span class="ident">Clone</span> <span class="op">+</span> <span class="ident">Recast</span><span class="op">&lt;</span><span class="ident">World</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">Recast</span><span class="op">&lt;</span><span class="ident">View</span><span class="op">&gt;</span> <span class="op">+</span> <span class="ident">Recast</span><span class="op">&lt;</span><span class="ident">Axial</span><span class="op">&gt;</span> {}
+
+<span class="kw">impl</span> <span class="ident">AnyFrame</span> <span class="kw">for</span> <span class="ident">Axial</span> {}
+<span class="kw">impl</span> <span class="ident">AnyFrame</span> <span class="kw">for</span> <span class="ident">World</span> {}
+<span class="kw">impl</span> <span class="ident">AnyFrame</span> <span class="kw">for</span> <span class="ident">View</span> {}
+
+<span class="doccomment">/// Implemented by Frame objects, to allow converting to other frames</span>
+<span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">Recast</span><span class="op">&lt;</span><span class="ident">F</span>: <span class="ident">AnyFrame</span><span class="op">&gt;</span>: <span class="ident">Sized</span> {
+    <span class="doccomment">/// Consume the current object and convert it to another frame.</span>
+    <span class="kw">fn</span> <span class="ident">recast</span>(<span class="self">self</span>, <span class="ident">_view_state</span>: <span class="kw-2">&amp;</span><span class="kw">impl</span> <span class="ident">ViewTransform</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">F</span>;
+}
+
+<span class="doccomment">/// Convert Axial frame to World</span>
+<span class="kw">impl</span> <span class="ident">Recast</span><span class="op">&lt;</span><span class="ident">World</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Axial</span> {
+    <span class="kw">fn</span> <span class="ident">recast</span>(<span class="self">self</span>, <span class="ident">_view_state</span>: <span class="kw-2">&amp;</span><span class="kw">impl</span> <span class="ident">ViewTransform</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">World</span> {
+        <span class="ident">World</span>::<span class="ident">from</span>(<span class="ident">convert</span>::<span class="ident">axial_to_world</span>(<span class="self">self</span>.<span class="ident">into</span>()))
+    }
+}
+
+<span class="doccomment">/// Convert World frame to Axial</span>
+<span class="kw">impl</span> <span class="ident">Recast</span><span class="op">&lt;</span><span class="ident">Axial</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">World</span> {
+    <span class="kw">fn</span> <span class="ident">recast</span>(<span class="self">self</span>, <span class="ident">_view_state</span>: <span class="kw-2">&amp;</span><span class="kw">impl</span> <span class="ident">ViewTransform</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Axial</span> {
+        <span class="ident">Axial</span>::<span class="ident">from</span>(<span class="ident">convert</span>::<span class="ident">world_to_axial</span>(<span class="self">self</span>.<span class="ident">into</span>()))
+    }
+}
+
+<span class="doccomment">/// Convert World frame to View</span>
+<span class="kw">impl</span> <span class="ident">Recast</span><span class="op">&lt;</span><span class="ident">World</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">View</span> {
+    <span class="kw">fn</span> <span class="ident">recast</span>(<span class="self">self</span>, <span class="ident">view_state</span>: <span class="kw-2">&amp;</span><span class="kw">impl</span> <span class="ident">ViewTransform</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">World</span> {
+        <span class="kw">let</span> <span class="ident">t</span> <span class="op">=</span> <span class="ident">view_state</span>.<span class="ident">view_transform</span>().<span class="ident">inverse</span>();
+        <span class="ident">World</span>::<span class="ident">from</span>(<span class="ident">t</span>.<span class="ident">transform_point</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="number">0</span>))
+    }
+}
+
+<span class="doccomment">/// Convert View frame to World</span>
+<span class="kw">impl</span> <span class="ident">Recast</span><span class="op">&lt;</span><span class="ident">View</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">World</span> {
+    <span class="kw">fn</span> <span class="ident">recast</span>(<span class="self">self</span>, <span class="ident">view_state</span>: <span class="kw-2">&amp;</span><span class="kw">impl</span> <span class="ident">ViewTransform</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">View</span> {
+        <span class="kw">let</span> <span class="ident">t</span> <span class="op">=</span> <span class="ident">view_state</span>.<span class="ident">view_transform</span>();
+        <span class="ident">View</span>::<span class="ident">from</span>(<span class="ident">t</span>.<span class="ident">transform_point</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="number">0</span>))
+    }
+}
+
+<span class="doccomment">/// Convert from View to Axial (goes via conversion to World)</span>
+<span class="kw">impl</span> <span class="ident">Recast</span><span class="op">&lt;</span><span class="ident">View</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Axial</span> {
+    <span class="kw">fn</span> <span class="ident">recast</span>(<span class="self">self</span>, <span class="ident">view_state</span>: <span class="kw-2">&amp;</span><span class="kw">impl</span> <span class="ident">ViewTransform</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">View</span> {
+        <span class="kw">let</span> <span class="ident">world</span>: <span class="ident">World</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">recast</span>(<span class="ident">view_state</span>);
+        <span class="ident">world</span>.<span class="ident">recast</span>(<span class="ident">view_state</span>)
+    }
+}
+
+<span class="doccomment">/// Convert from Axial to View (goes via conversion to World)</span>
+<span class="kw">impl</span> <span class="ident">Recast</span><span class="op">&lt;</span><span class="ident">Axial</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">View</span> {
+    <span class="kw">fn</span> <span class="ident">recast</span>(<span class="self">self</span>, <span class="ident">view_state</span>: <span class="kw-2">&amp;</span><span class="kw">impl</span> <span class="ident">ViewTransform</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Axial</span> {
+        <span class="kw">let</span> <span class="ident">world</span>: <span class="ident">World</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">recast</span>(<span class="ident">view_state</span>);
+        <span class="ident">world</span>.<span class="ident">recast</span>(<span class="ident">view_state</span>)
+    }
+}
+
+<span class="doccomment">/// Implement no-op where recast is called to the same reference frame</span>
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">F</span>: <span class="ident">AnyFrame</span><span class="op">&gt;</span> <span class="ident">Recast</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">F</span> {
+    <span class="kw">fn</span> <span class="ident">recast</span>(<span class="self">self</span>, <span class="ident">_view_state</span>: <span class="kw-2">&amp;</span><span class="kw">impl</span> <span class="ident">ViewTransform</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">F</span> {
+        <span class="self">self</span>
+    }
+}
+
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
+<span class="kw">mod</span> <span class="ident">tests</span> {
+    <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
+    <span class="kw">use</span> <span class="ident">csv</span>::<span class="ident">Reader</span>;
+    <span class="kw">use</span> <span class="ident">nalgebra</span>::{<span class="ident">Matrix3</span>, <span class="ident">Vector2</span>};
+    <span class="kw">use</span> <span class="ident">serde</span>::<span class="ident">Deserialize</span>;
+
+    <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">PartialEq</span>)]</span>
+    <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">State</span>;
+
+    <span class="kw">impl</span> <span class="ident">ViewTransform</span> <span class="kw">for</span> <span class="ident">State</span> {
+        <span class="kw">type</span> <span class="ident">Ref</span> <span class="op">=</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">Projective2</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span><span class="op">&gt;</span>;
+
+        <span class="kw">fn</span> <span class="ident">view_transform</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">Projective2</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span><span class="op">&gt;</span> {
+            <span class="comment">// Scale 100, 50 + translate 42, 25</span>
+            <span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">Projective2</span>::<span class="ident">from_matrix_unchecked</span>(
+                <span class="ident">Matrix3</span>::<span class="ident">identity</span>()
+                    .<span class="ident">append_nonuniform_scaling</span>(<span class="kw-2">&amp;</span><span class="ident">Vector2</span>::<span class="ident">new</span>(<span class="number">100.</span>, <span class="number">50.</span>))
+                    .<span class="ident">append_translation</span>(<span class="kw-2">&amp;</span><span class="ident">Vector2</span>::<span class="ident">new</span>(<span class="number">42.</span>, <span class="number">25.</span>)),
+            ))
+        }
+    }
+
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">world_to_view</span>() {
+        <span class="kw">let</span> <span class="ident">world</span> <span class="op">=</span> <span class="ident">World</span>::<span class="ident">from</span>([<span class="number">2.0</span>, <span class="number">3.0</span>]);
+        <span class="kw">let</span> <span class="ident">view</span>: <span class="ident">View</span> <span class="op">=</span> <span class="ident">world</span>.<span class="ident">recast</span>(<span class="kw-2">&amp;</span><span class="ident">State</span>);
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">view</span>, <span class="ident">View</span>::<span class="ident">from</span>([<span class="number">242.0</span>, <span class="number">175.0</span>]));
+    }
+
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">view_to_world</span>() {
+        <span class="kw">let</span> <span class="ident">view</span> <span class="op">=</span> <span class="ident">View</span>::<span class="ident">from</span>([<span class="number">242.0</span>, <span class="number">175.0</span>]);
+        <span class="kw">let</span> <span class="ident">world</span>: <span class="ident">World</span> <span class="op">=</span> <span class="ident">view</span>.<span class="ident">recast</span>(<span class="kw-2">&amp;</span><span class="ident">State</span>);
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">world</span>, <span class="ident">World</span>::<span class="ident">from</span>([<span class="number">2.0</span>, <span class="number">3.0</span>]));
+    }
+
+    <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Deserialize</span>)]</span>
+    <span class="kw">struct</span> <span class="ident">WorldToAxialTest</span> {
+        <span class="ident">x</span>: <span class="ident">f64</span>,
+        <span class="ident">y</span>: <span class="ident">f64</span>,
+        <span class="ident">i</span>: <span class="ident">i64</span>,
+        <span class="ident">j</span>: <span class="ident">i64</span>,
+    }
+
+    <span class="kw">impl</span> <span class="ident">WorldToAxialTest</span> {
+        <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">x</span>: <span class="ident">f64</span>, <span class="ident">y</span>: <span class="ident">f64</span>, <span class="ident">i</span>: <span class="ident">i64</span>, <span class="ident">j</span>: <span class="ident">i64</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">WorldToAxialTest</span> {
+            <span class="ident">WorldToAxialTest</span> { <span class="ident">x</span>, <span class="ident">y</span>, <span class="ident">i</span>, <span class="ident">j</span> }
+        }
+
+        <span class="kw">fn</span> <span class="ident">from_path</span>(<span class="ident">path</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">WorldToAxialTest</span><span class="op">&gt;</span> {
+            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">reader</span> <span class="op">=</span> <span class="ident">Reader</span>::<span class="ident">from_path</span>(<span class="ident">path</span>).<span class="ident">unwrap</span>();
+            <span class="ident">reader</span>
+                .<span class="ident">records</span>()
+                .<span class="ident">map</span>(<span class="op">|</span><span class="ident">test_row</span><span class="op">|</span> <span class="ident">test_row</span>.<span class="ident">unwrap</span>().<span class="ident">deserialize</span>(<span class="prelude-val">None</span>).<span class="ident">unwrap</span>())
+                .<span class="ident">collect</span>()
+        }
+
+        <span class="kw">fn</span> <span class="ident">test</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) {
+            <span class="kw">let</span> <span class="ident">world</span> <span class="op">=</span> <span class="ident">World</span>::<span class="ident">from</span>([<span class="self">self</span>.<span class="ident">x</span>, <span class="self">self</span>.<span class="ident">y</span>]);
+            <span class="kw">let</span> <span class="ident">axial</span>: <span class="ident">Axial</span> <span class="op">=</span> <span class="ident">world</span>.<span class="ident">recast</span>(<span class="kw-2">&amp;</span><span class="ident">State</span>);
+            <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">axial</span>, <span class="ident">Axial</span>::<span class="ident">from</span>([<span class="self">self</span>.<span class="ident">i</span>, <span class="self">self</span>.<span class="ident">j</span>]));
+        }
+    }
+
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">world_to_axial</span>() {
+        <span class="comment">// Compare against three initial locations, calculated with Python</span>
+        <span class="comment">// using the code here: https://jthorniley.github.io/notebooks/hex.html</span>
+        <span class="ident">WorldToAxialTest</span>::<span class="ident">new</span>(<span class="number">0.5</span>, <span class="number">0.0</span>, <span class="number">0</span>, <span class="number">0</span>).<span class="ident">test</span>();
+        <span class="ident">WorldToAxialTest</span>::<span class="ident">new</span>(<span class="number">4.5</span>, <span class="number">10.0</span>, <span class="number">4</span>, <span class="number">7</span>).<span class="ident">test</span>();
+        <span class="ident">WorldToAxialTest</span>::<span class="ident">new</span>(<span class="op">-</span><span class="number">4.5</span>, <span class="number">10.0</span>, <span class="op">-</span><span class="number">5</span>, <span class="number">2</span>).<span class="ident">test</span>();
+
+        <span class="comment">// A large set of random tests is incorporated in this CSV file</span>
+        <span class="ident">WorldToAxialTest</span>::<span class="ident">from_path</span>(<span class="string">&quot;src/world-to-axial.csv&quot;</span>)
+            .<span class="ident">iter</span>()
+            .<span class="ident">for_each</span>(<span class="op">|</span><span class="ident">test</span><span class="op">|</span> <span class="ident">test</span>.<span class="ident">test</span>());
+    }
+
+    <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
+    <span class="kw">struct</span> <span class="ident">AxialToWorldTest</span> {
+        <span class="ident">i</span>: <span class="ident">i64</span>,
+        <span class="ident">j</span>: <span class="ident">i64</span>,
+        <span class="ident">x</span>: <span class="ident">f64</span>,
+        <span class="ident">y</span>: <span class="ident">f64</span>,
+    }
+    <span class="kw">impl</span> <span class="ident">AxialToWorldTest</span> {
+        <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">i</span>: <span class="ident">i64</span>, <span class="ident">j</span>: <span class="ident">i64</span>, <span class="ident">x</span>: <span class="ident">f64</span>, <span class="ident">y</span>: <span class="ident">f64</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">AxialToWorldTest</span> {
+            <span class="ident">AxialToWorldTest</span> { <span class="ident">i</span>, <span class="ident">j</span>, <span class="ident">x</span>, <span class="ident">y</span> }
+        }
+
+        <span class="kw">fn</span> <span class="ident">test</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) {
+            <span class="kw">let</span> <span class="ident">axial_location</span> <span class="op">=</span> <span class="ident">Axial</span>::<span class="ident">from</span>([<span class="self">self</span>.<span class="ident">i</span>, <span class="self">self</span>.<span class="ident">j</span>]);
+            <span class="kw">let</span> <span class="ident">world_location</span>: <span class="ident">World</span> <span class="op">=</span> <span class="ident">axial_location</span>.<span class="ident">recast</span>(<span class="kw-2">&amp;</span><span class="ident">State</span>);
+            <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">world_location</span>, <span class="ident">World</span>::<span class="ident">from</span>([<span class="self">self</span>.<span class="ident">x</span>, <span class="self">self</span>.<span class="ident">y</span>]))
+        }
+    }
+
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">axial_to_world</span>() {
+        <span class="ident">AxialToWorldTest</span>::<span class="ident">new</span>(<span class="number">0</span>, <span class="number">0</span>, <span class="number">0.</span>, <span class="number">0.</span>).<span class="ident">test</span>();
+        <span class="ident">AxialToWorldTest</span>::<span class="ident">new</span>(<span class="number">0</span>, <span class="number">1</span>, <span class="number">0.</span>, <span class="number">2.</span>).<span class="ident">test</span>();
+        <span class="ident">AxialToWorldTest</span>::<span class="ident">new</span>(<span class="number">0</span>, <span class="number">2</span>, <span class="number">0.</span>, <span class="number">4.</span>).<span class="ident">test</span>();
+        <span class="ident">AxialToWorldTest</span>::<span class="ident">new</span>(<span class="number">1</span>, <span class="number">0</span>, <span class="number">1.</span>, <span class="op">-</span><span class="number">1.</span>).<span class="ident">test</span>();
+        <span class="ident">AxialToWorldTest</span>::<span class="ident">new</span>(<span class="number">1</span>, <span class="number">1</span>, <span class="number">1.</span>, <span class="number">1.</span>).<span class="ident">test</span>();
+        <span class="ident">AxialToWorldTest</span>::<span class="ident">new</span>(<span class="number">1</span>, <span class="number">2</span>, <span class="number">1.</span>, <span class="number">3.</span>).<span class="ident">test</span>();
+        <span class="ident">AxialToWorldTest</span>::<span class="ident">new</span>(<span class="number">2</span>, <span class="number">0</span>, <span class="number">2.</span>, <span class="op">-</span><span class="number">2.</span>).<span class="ident">test</span>();
+        <span class="ident">AxialToWorldTest</span>::<span class="ident">new</span>(<span class="number">2</span>, <span class="number">1</span>, <span class="number">2.</span>, <span class="number">0.</span>).<span class="ident">test</span>();
+        <span class="ident">AxialToWorldTest</span>::<span class="ident">new</span>(<span class="number">2</span>, <span class="number">2</span>, <span class="number">2.</span>, <span class="number">2.</span>).<span class="ident">test</span>();
+    }
+
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">axial_to_view</span>() {
+        <span class="kw">let</span> <span class="ident">axial</span> <span class="op">=</span> <span class="ident">Axial</span>::<span class="ident">from</span>([<span class="number">1</span>, <span class="number">2</span>]);
+        <span class="kw">let</span> <span class="ident">view</span>: <span class="ident">View</span> <span class="op">=</span> <span class="ident">axial</span>.<span class="ident">recast</span>(<span class="kw-2">&amp;</span><span class="ident">State</span>);
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">view</span>, <span class="ident">View</span>::<span class="ident">from</span>([<span class="number">142.0</span>, <span class="number">175.0</span>]));
+    }
+
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">view_to_axial</span>() {
+        <span class="kw">let</span> <span class="ident">view</span> <span class="op">=</span> <span class="ident">View</span>::<span class="ident">from</span>([<span class="number">145.0</span>, <span class="number">200.0</span>]);
+        <span class="kw">let</span> <span class="ident">axial</span>: <span class="ident">Axial</span> <span class="op">=</span> <span class="ident">view</span>.<span class="ident">recast</span>(<span class="kw-2">&amp;</span><span class="ident">State</span>);
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">axial</span>, <span class="ident">Axial</span>::<span class="ident">from</span>([<span class="number">1</span>, <span class="number">2</span>]));
+        <span class="kw">let</span> <span class="ident">new_view</span>: <span class="ident">View</span> <span class="op">=</span> <span class="ident">axial</span>.<span class="ident">recast</span>(<span class="kw-2">&amp;</span><span class="ident">State</span>);
+        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">new_view</span>, <span class="ident">View</span>::<span class="ident">from</span>([<span class="number">142.0</span>, <span class="number">175.0</span>]));
+    }
+}
+</pre></div>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><script>window.rootPath = "../../";window.currentCrate = "hexeng";</script><script src="../../aliases.js"></script><script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script><script defer src="../../search-index.js"></script></body></html>

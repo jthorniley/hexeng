@@ -1,0 +1,9 @@
+var ALIASES = {};
+ALIASES["cfg_if"] = {};
+ALIASES["hexeng"] = {};
+ALIASES["libm"] = {};
+ALIASES["ppv_lite86"] = {};
+ALIASES["proc_macro2"] = {};
+ALIASES["proc_macro_hack"] = {};
+ALIASES["rawpointer"] = {};
+ALIASES["unicode_xid"] = {};
