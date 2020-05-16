@@ -1,6 +1,6 @@
 # hexeng: a crate for handling hexagonal tilings / grids / tesselation.
 
-* [API Documentation (with examples)](https://jthorniley.github.io/hexeng/doc/)
+* [API Documentation (with examples)](https://jthorniley.github.io/hexeng/doc/hexeng)
 * [Demo code](https://github.com/jthorniley/hexeng/blob/master/examples/demo.rs)
   - run with `cargo run --example demo`
 
