@@ -19,6 +19,15 @@ cargo run --example demo
 * [API Documentation (with examples)](https://jthorniley.github.io/hexeng/doc/hexeng)
 * [Demo code](https://github.com/jthorniley/hexeng/blob/master/examples/demo.rs)
 * [Explanatory notes](https://jthorniley.github.io/notebooks/hex.html)
+* [RedBlobGames hexagon notes](https://www.redblobgames.com/grids/hexagons/) -
+  inspiration for much of this.
+
+## Other useful crates
+
+Some other crates that provide hex tiling algorithms:
+
+* [Beehive](https://github.com/toasteater/beehive)
+* [hex2d-rs](https://github.com/dpc/hex2d-rs)
 
 # License
 
