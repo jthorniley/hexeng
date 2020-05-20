@@ -140,17 +140,17 @@ impl ViewTransform for Matrix3<f64> {
 }
 
 /// Used to identify Frame objects that are in Axial coordinates by typing.
-#[derive(PartialEq, Clone)]
+#[derive(Hash, Eq, PartialEq, Clone)]
 #[cfg_attr(test, derive(Debug))]
 pub enum TAxial {}
 
 /// Used to identify Frame objects that are in World coordinates by typing.
-#[derive(PartialEq, Clone)]
+#[derive(Hash, Eq, PartialEq, Clone)]
 #[cfg_attr(test, derive(Debug))]
 pub enum TWorld {}
 
 /// Used to identify Frame objects that are in View coordinates by typing.
-#[derive(PartialEq, Clone)]
+#[derive(Hash, Eq, PartialEq, Clone)]
 #[cfg_attr(test, derive(Debug))]
 pub enum TView {}
 
@@ -158,7 +158,7 @@ pub enum TView {}
 ///
 /// The frame is included in the type by the parameter T, which
 /// should be one of TAxial, TWorld or TView.
-#[derive(PartialEq, Clone)]
+#[derive(Hash, Eq, PartialEq, Clone)]
 #[cfg_attr(test, derive(Debug))]
 pub struct Frame<V: Scalar, T>(Point2<V>, PhantomData<T>);
 
